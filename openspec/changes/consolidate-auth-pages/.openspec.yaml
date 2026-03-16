@@ -1,0 +1,11 @@
+id: consolidate-auth-pages
+name: Consolidate Authentication Pages
+description: Merge Fortify and Filament login/register flows into a unified experience
+status: implemented
+created_at: 2026-03-16
+artifacts:
+  - proposal.md
+  - design.md
+  - tasks.md
+apply:
+  requires: [tasks]

@@ -24,6 +24,11 @@ class UserResource extends Resource
 
     protected static ?string $navigationLabel = 'Personnel & Coordinators';
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()->hasRole('sdo_admin');
+    }
+
     protected static ?string $label = 'Personnel';
 
     protected static ?string $pluralLabel = 'Personnel & Coordinators';

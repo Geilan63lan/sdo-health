@@ -16,8 +16,8 @@ class HealthRecordFactory extends Factory
         $height = fake()->randomFloat(2, 100, 180); // cm
         $weight = fake()->randomFloat(2, 20, 90);   // kg
         $bmi = $weight / (($height / 100) ** 2);
-        
-        $category = match(true) {
+
+        $category = match (true) {
             $bmi < 18.5 => 'Underweight',
             $bmi < 25 => 'Normal',
             $bmi < 30 => 'Overweight',

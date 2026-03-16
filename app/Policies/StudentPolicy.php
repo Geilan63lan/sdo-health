@@ -13,9 +13,16 @@ class StudentPolicy
      */
     public function viewAny(User $user): Response
     {
-        return $user->hasRole('sdo_admin')
-            ? Response::allow()
-            : Response::deny('You do not have permission to view students.');
+        if ($user->hasRole('sdo_admin')) {
+            return Response::allow();
+        }
+
+        // Health Coordinators and Principals can view students from their school
+        if ($user->hasRole(['health_coordinator', 'principal'])) {
+            return Response::allow();
+        }
+
+        return Response::deny('You do not have permission to view students.');
     }
 
     /**

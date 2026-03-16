@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\Absences\Pages\CreateAbsence;
-use App\Filament\Resources\Absences\Pages\EditAbsence;
 use App\Filament\Resources\Absences\Pages\ListAbsences;
 use App\Filament\Resources\Absences\Schemas\AbsenceForm;
 use App\Filament\Resources\Absences\Tables\AbsencesTable;
@@ -12,6 +10,7 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
 class AbsenceResource extends Resource
@@ -36,6 +35,19 @@ class AbsenceResource extends Resource
     public static function table(Table $table): Table
     {
         return AbsencesTable::configure($table);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        if (auth()->user()->hasRole('health_coordinator') || auth()->user()->hasRole('principal')) {
+            $query->whereHas('student', function ($q) {
+                $q->where('school_id', auth()->user()->school_id);
+            });
+        }
+
+        return $query;
     }
 
     public static function getRelations(): array

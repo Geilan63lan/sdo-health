@@ -24,6 +24,7 @@ class User extends Authenticatable implements FilamentUser
         'password',
         'role',
         'school_id',
+        'is_approved',
     ];
 
     protected $hidden = [
@@ -38,6 +39,7 @@ class User extends Authenticatable implements FilamentUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_approved' => 'boolean',
         ];
     }
 
@@ -85,7 +87,14 @@ class User extends Authenticatable implements FilamentUser
     {
         // Only allow users with admin roles to access the admin panel
         if ($panel->getId() === 'admin') {
-            return $this->hasRole('sdo_admin') || $this->hasRole('health_coordinator') || $this->hasRole('principal');
+            // SDO Admins always have access if verified (or skip verification for initial setup if needed)
+            if ($this->hasRole('sdo_admin')) {
+                return $this->email_verified_at !== null;
+            }
+
+            return $this->email_verified_at !== null
+                && $this->is_approved === true
+                && ($this->hasRole('health_coordinator') || $this->hasRole('principal'));
         }
 
         return true;

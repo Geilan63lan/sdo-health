@@ -7,6 +7,7 @@ use App\Concerns\ProfileValidationRules;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
+use Spatie\Permission\Models\Role;
 
 class CreateNewUser implements CreatesNewUsers
 {
@@ -24,10 +25,22 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $this->passwordRules(),
         ])->validate();
 
-        return User::create([
+        $user = User::create([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => $input['password'],
+            'school_id' => $input['school_id'],
+            'role' => 'health_coordinator', // Set default role column (matches database enum)
+            'is_approved' => false, // Require admin approval
         ]);
+
+        // Assign default Spatie role
+        $role = Role::where('name', 'health_coordinator')->first();
+        if (! $role) {
+            $role = Role::create(['name' => 'health_coordinator']);
+        }
+        $user->assignRole($role);
+
+        return $user;
     }
 }

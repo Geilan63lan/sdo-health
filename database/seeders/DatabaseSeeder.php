@@ -2,13 +2,13 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\Absence;
+use App\Models\HealthProgram;
+use App\Models\HealthRecord;
 use App\Models\School;
 use App\Models\Student;
-use App\Models\HealthRecord;
-use App\Models\HealthProgram;
+use App\Models\User;
 use App\Models\Vaccination;
-use App\Models\Absence;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -37,8 +37,8 @@ class DatabaseSeeder extends Seeder
         foreach ($schools as $school) {
             // Create Principal for the school
             $principal = User::factory()->create([
-                'name' => "Principal " . fake()->randomElement($filipinoFirstNames) . " " . fake()->randomElement($filipinoLastNames),
-                'email' => "principal." . strtolower(str_replace(' ', '', $school->name)) . "@example.com",
+                'name' => 'Principal '.fake()->randomElement($filipinoFirstNames).' '.fake()->randomElement($filipinoLastNames),
+                'email' => 'principal.'.strtolower(str_replace(' ', '', $school->name)).'@example.com',
                 'role' => 'principal',
                 'school_id' => $school->id,
             ]);
@@ -46,8 +46,8 @@ class DatabaseSeeder extends Seeder
 
             // Create Health Coordinator for the school
             $coordinator = User::factory()->create([
-                'name' => "Nurse " . fake()->randomElement($filipinoFirstNames) . " " . fake()->randomElement($filipinoLastNames),
-                'email' => "nurse." . strtolower(str_replace(' ', '', $school->name)) . "@example.com",
+                'name' => 'Nurse '.fake()->randomElement($filipinoFirstNames).' '.fake()->randomElement($filipinoLastNames),
+                'email' => 'nurse.'.strtolower(str_replace(' ', '', $school->name)).'@example.com',
                 'role' => 'health_coordinator',
                 'school_id' => $school->id,
             ]);
@@ -56,9 +56,9 @@ class DatabaseSeeder extends Seeder
             // 3. Create Students and their records
             Student::factory(20)->create([
                 'school_id' => $school->id,
-                'first_name' => fn() => fake()->randomElement($filipinoFirstNames),
-                'last_name' => fn() => fake()->randomElement($filipinoLastNames),
-                'guardian_name' => fn() => fake()->randomElement($filipinoFirstNames) . " " . fake()->randomElement($filipinoLastNames),
+                'first_name' => fn () => fake()->randomElement($filipinoFirstNames),
+                'last_name' => fn () => fake()->randomElement($filipinoLastNames),
+                'guardian_name' => fn () => fake()->randomElement($filipinoFirstNames).' '.fake()->randomElement($filipinoLastNames),
             ])->each(function ($student) use ($coordinator) {
                 // Add Health Records
                 HealthRecord::factory(rand(1, 3))->create([

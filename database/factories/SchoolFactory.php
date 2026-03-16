@@ -36,14 +36,14 @@ class SchoolFactory extends Factory
             'Barangay Comun', 'Barangay Danao', 'Barangay Liwacsa', 'Barangay Maslog',
             'Barangay Pawa', 'Barangay Pili', 'Barangay San Francisco', 'Barangay San Roque',
             'Barangay Taysan', 'Barangay Tumpa', 'Barangay Imperial Court Subdivision',
-            'Barangay Emerald Heights', 'Barangay East Government Center', 'Barangay West CBD'
+            'Barangay Emerald Heights', 'Barangay East Government Center', 'Barangay West CBD',
         ];
-        
+
         $types = ['Elementary School', 'National High School', 'Integrated School', 'Science High School', 'Child Development Center'];
-        
+
         return [
-            'name' => 'Legazpi City ' . fake()->randomElement($types) . ' ' . fake()->unique()->numberBetween(1, 20),
-            'address' => fake()->randomElement($legazpiBarangays) . ', Legazpi City, Albay',
+            'name' => 'Legazpi City '.fake()->randomElement($types).' '.fake()->unique()->numberBetween(1, 20),
+            'address' => fake()->randomElement($legazpiBarangays).', Legazpi City, Albay',
             'level' => fake()->randomElement(['elementary', 'jhs', 'shs', 'integrated']),
             'contact_number' => fake()->phoneNumber(),
             'email' => fake()->unique()->safeEmail(),

@@ -16,7 +16,7 @@ test('guests are redirected to the login page', function () {
 });
 
 test('authenticated users can visit the admin panel', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->create(['is_approved' => true]);
     $user->assignRole('sdo_admin');
     $this->actingAs($user);
 

@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\HealthPrograms\Pages\CreateHealthProgram;
-use App\Filament\Resources\HealthPrograms\Pages\EditHealthProgram;
 use App\Filament\Resources\HealthPrograms\Pages\ListHealthPrograms;
 use App\Filament\Resources\HealthPrograms\Schemas\HealthProgramForm;
 use App\Filament\Resources\HealthPrograms\Tables\HealthProgramsTable;
@@ -27,6 +25,11 @@ class HealthProgramResource extends Resource
     protected static ?string $label = 'Health Program';
 
     protected static ?string $pluralLabel = 'Health Programs';
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()->hasRole('sdo_admin');
+    }
 
     public static function form(Schema $schema): Schema
     {

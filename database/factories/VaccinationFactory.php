@@ -18,7 +18,7 @@ class VaccinationFactory extends Factory
             'vaccine_name' => fake()->randomElement(['BCG', 'Hepatitis B', 'DTP', 'Polio', 'MMR', 'COVID-19', 'HPV']),
             'date_given' => fake()->dateTimeBetween('-2 years', 'now'),
             'dose_number' => fake()->randomElement(['1st Dose', '2nd Dose', 'Booster']),
-            'administered_by' => 'Dr. ' . fake()->name(),
+            'administered_by' => 'Dr. '.fake()->name(),
             'batch_number' => fake()->bothify('BATCH-####??'),
             'notes' => fake()->optional()->sentence(),
             'recorded_by' => User::factory(),

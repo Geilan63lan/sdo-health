@@ -4,8 +4,8 @@ namespace App\Filament\Resources\Users\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
 class UserForm
@@ -22,10 +22,10 @@ class UserForm
                     ->required(),
                 Select::make('role')
                     ->options([
-            'sdo_admin' => 'Sdo admin',
-            'principal' => 'Principal',
-            'health_coordinator' => 'Health coordinator',
-        ])
+                        'sdo_admin' => 'Sdo admin',
+                        'principal' => 'Principal',
+                        'health_coordinator' => 'Health coordinator',
+                    ])
                     ->default('health_coordinator')
                     ->required(),
                 DateTimePicker::make('email_verified_at'),

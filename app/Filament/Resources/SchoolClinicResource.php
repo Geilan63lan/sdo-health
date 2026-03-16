@@ -26,6 +26,11 @@ class SchoolClinicResource extends Resource
 
     protected static ?string $pluralLabel = 'School Clinics';
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()->hasRole('sdo_admin');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return SchoolClinicForm::configure($schema);

@@ -26,11 +26,13 @@ class UsersTable
                 TextColumn::make('email_verified_at')
                     ->label('EMAIL VERIFIED AT')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable()
+                    ->hidden(fn () => ! auth()->user()->hasRole('sdo_admin')),
                 TextColumn::make('two_factor_confirmed_at')
                     ->label('2FA CONFIRMED AT')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable()
+                    ->hidden(fn () => ! auth()->user()->hasRole('sdo_admin')),
                 TextColumn::make('created_at')
                     ->label('CREATED AT')
                     ->dateTime()

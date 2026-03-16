@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\HealthRecords\Pages\CreateHealthRecord;
-use App\Filament\Resources\HealthRecords\Pages\EditHealthRecord;
 use App\Filament\Resources\HealthRecords\Pages\ListHealthRecords;
 use App\Filament\Resources\HealthRecords\Schemas\HealthRecordForm;
 use App\Filament\Resources\HealthRecords\Tables\HealthRecordsTable;
@@ -12,6 +10,7 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
 class HealthRecordResource extends Resource
@@ -36,6 +35,19 @@ class HealthRecordResource extends Resource
     public static function table(Table $table): Table
     {
         return HealthRecordsTable::configure($table);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        if (auth()->user()->hasRole('health_coordinator') || auth()->user()->hasRole('principal')) {
+            $query->whereHas('student', function ($q) {
+                $q->where('school_id', auth()->user()->school_id);
+            });
+        }
+
+        return $query;
     }
 
     public static function getRelations(): array

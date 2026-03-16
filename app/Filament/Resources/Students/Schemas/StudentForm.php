@@ -16,7 +16,9 @@ class StudentForm
             ->components([
                 Select::make('school_id')
                     ->relationship('school', 'name')
-                    ->required(),
+                    ->required()
+                    ->hidden(fn () => auth()->user()->hasRole('health_coordinator'))
+                    ->default(fn () => auth()->user()->hasRole('health_coordinator') ? auth()->user()->school_id : null),
                 TextInput::make('lrn')
                     ->label('LRN')
                     ->required(),

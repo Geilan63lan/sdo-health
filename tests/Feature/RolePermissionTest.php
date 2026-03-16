@@ -9,7 +9,7 @@ uses(RefreshDatabase::class);
 test('sdo_admin can access admin panel', function () {
     $this->seed(RolePermissionSeeder::class);
 
-    $user = User::factory()->create();
+    $user = User::factory()->create(['is_approved' => true]);
     $user->assignRole('sdo_admin');
 
     $this->actingAs($user);
@@ -20,7 +20,7 @@ test('sdo_admin can access admin panel', function () {
 test('health_coordinator can access admin panel', function () {
     $this->seed(RolePermissionSeeder::class);
 
-    $user = User::factory()->create();
+    $user = User::factory()->create(['is_approved' => true]);
     $user->assignRole('health_coordinator');
 
     $this->actingAs($user);
@@ -31,7 +31,7 @@ test('health_coordinator can access admin panel', function () {
 test('principal can access admin panel', function () {
     $this->seed(RolePermissionSeeder::class);
 
-    $user = User::factory()->create();
+    $user = User::factory()->create(['is_approved' => true]);
     $user->assignRole('principal');
 
     $this->actingAs($user);

@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\Vaccinations\Pages\CreateVaccination;
-use App\Filament\Resources\Vaccinations\Pages\EditVaccination;
 use App\Filament\Resources\Vaccinations\Pages\ListVaccinations;
 use App\Filament\Resources\Vaccinations\Schemas\VaccinationForm;
 use App\Filament\Resources\Vaccinations\Tables\VaccinationsTable;
@@ -12,6 +10,7 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
 class VaccinationResource extends Resource
@@ -36,6 +35,19 @@ class VaccinationResource extends Resource
     public static function table(Table $table): Table
     {
         return VaccinationsTable::configure($table);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        if (auth()->user()->hasRole('health_coordinator') || auth()->user()->hasRole('principal')) {
+            $query->whereHas('student', function ($q) {
+                $q->where('school_id', auth()->user()->school_id);
+            });
+        }
+
+        return $query;
     }
 
     public static function getRelations(): array

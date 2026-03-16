@@ -4,8 +4,8 @@ namespace App\Filament\Resources\Absences\Schemas;
 
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 
@@ -16,7 +16,7 @@ class AbsenceForm
         return $schema
             ->components([
                 Select::make('student_id')
-                    ->relationship('student')
+                    ->relationship('student', 'first_name', fn ($query) => auth()->user()->hasRole('health_coordinator') ? $query->where('school_id', auth()->user()->school_id) : $query)
                     ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->first_name} {$record->last_name} ({$record->lrn})")
                     ->searchable(['first_name', 'last_name', 'lrn'])
                     ->preload()

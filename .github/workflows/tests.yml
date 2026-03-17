@@ -2,17 +2,9 @@ name: tests
 
 on:
   push:
-    branches:
-      - develop
-      - main
-      - master
-      - workos
+    branches: [develop, main, master, workos]
   pull_request:
-    branches:
-      - develop
-      - main
-      - master
-      - workos
+    branches: [develop, main, master, workos]
 
 jobs:
   ci:
@@ -24,13 +16,14 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer:v2
+          extensions: mbstring, xml, ctype, iconv, sqlite3, pdo_sqlite
           coverage: xdebug
 
       - name: Setup Node
@@ -41,8 +34,13 @@ jobs:
       - name: Install Node Dependencies
         run: npm i
 
-      - name: Add Flux Credentials Loaded From ENV
+      - name: Add Flux Credentials
         run: composer config http-basic.composer.fluxui.dev "${{ secrets.FLUX_USERNAME }}" "${{ secrets.FLUX_LICENSE_KEY }}"
+
+      - name: Create storage directories
+        run: |
+          mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views
+          chmod -R 777 storage bootstrap/cache
 
       - name: Install Dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader

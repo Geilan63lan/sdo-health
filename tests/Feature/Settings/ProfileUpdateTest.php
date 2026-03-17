@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\School;
 use App\Models\User;
 use Livewire\Livewire;
 
@@ -10,13 +11,15 @@ test('profile page is displayed', function () {
 });
 
 test('profile information can be updated', function () {
-    $user = User::factory()->create();
+    $school = School::factory()->create();
+    $user = User::factory()->create(['school_id' => $school->id]);
 
     $this->actingAs($user);
 
     $response = Livewire::test('pages::settings.profile')
         ->set('name', 'Test User')
         ->set('email', 'test@example.com')
+        ->set('school_id', $school->id)
         ->call('updateProfileInformation');
 
     $response->assertHasNoErrors();
@@ -29,13 +32,15 @@ test('profile information can be updated', function () {
 });
 
 test('email verification status is unchanged when email address is unchanged', function () {
-    $user = User::factory()->create();
+    $school = School::factory()->create();
+    $user = User::factory()->create(['school_id' => $school->id]);
 
     $this->actingAs($user);
 
     $response = Livewire::test('pages::settings.profile')
         ->set('name', 'Test User')
         ->set('email', $user->email)
+        ->set('school_id', $school->id)
         ->call('updateProfileInformation');
 
     $response->assertHasNoErrors();

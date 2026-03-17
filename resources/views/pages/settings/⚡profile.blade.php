@@ -13,6 +13,7 @@ new #[Title('Profile settings')] class extends Component {
 
     public string $name = '';
     public string $email = '';
+    public ?int $school_id = null;
 
     /**
      * Mount the component.
@@ -21,6 +22,7 @@ new #[Title('Profile settings')] class extends Component {
     {
         $this->name = Auth::user()->name;
         $this->email = Auth::user()->email;
+        $this->school_id = Auth::user()->school_id;
     }
 
     /**

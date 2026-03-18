@@ -15,6 +15,10 @@ class SchoolsTable
     {
         return $table
             ->columns([
+                TextColumn::make('school_id')
+                    ->label('School ID')
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('address')

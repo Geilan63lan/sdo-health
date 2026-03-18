@@ -21,6 +21,7 @@ class HealthProgram extends Model
         'target_grade',
         'status',
         'coordinator_id',
+        'remarks',
     ];
 
     protected $casts = [

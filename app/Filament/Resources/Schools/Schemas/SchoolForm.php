@@ -13,6 +13,10 @@ class SchoolForm
     {
         return $schema
             ->components([
+                TextInput::make('school_id')
+                    ->label('School ID')
+                    ->required()
+                    ->unique(),
                 TextInput::make('name')
                     ->required(),
                 TextInput::make('address')

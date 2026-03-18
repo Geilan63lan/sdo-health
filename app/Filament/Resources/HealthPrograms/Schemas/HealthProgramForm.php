@@ -60,6 +60,8 @@ class HealthProgramForm
         ])
                     ->default('planned')
                     ->required(),
+                Textarea::make('remarks')
+                    ->columnSpanFull(),
                 Select::make('coordinator_id')
                     ->relationship('coordinator', 'name')
                     ->required(),

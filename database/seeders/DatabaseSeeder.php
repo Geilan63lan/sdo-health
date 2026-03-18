@@ -16,10 +16,13 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // 1. Seed all schools first
+        $this->call(SchoolSeeder::class);
+
         $filipinoLastNames = ['Garcia', 'Santos', 'Reyes', 'Cruz', 'Bautista', 'Ocampo', 'Dela Cruz', 'Mendoza', 'Pascual', 'Castillo', 'Villanueva', 'Gonzales', 'Rivera', 'Aquino', 'Santiago'];
         $filipinoFirstNames = ['Jose', 'Maria', 'Juan', 'Angelo', 'Liza', 'Rene', 'Teresa', 'Antonio', 'Cristina', 'Ricardo', 'Elena', 'Roberto', 'Carmen', 'Francisco', 'Pilar'];
 
-        // 1. Create SDO Admin
+        // 2. Create SDO Admin
         User::factory()->create([
             'name' => 'SDO Admin',
             'email' => 'admin@sdo.gov.ph',
@@ -27,14 +30,14 @@ class DatabaseSeeder extends Seeder
             'role' => 'sdo_admin',
         ]);
 
-        // 2. Create Schools and Users
-        $schools = School::factory(5)->create();
+        // 3. Get all schools from the seeder
+        $schools = School::all();
 
         foreach ($schools as $school) {
             // Create Principal for the school
             User::factory()->create([
                 'name' => "Principal " . fake()->randomElement($filipinoFirstNames) . " " . fake()->randomElement($filipinoLastNames),
-                'email' => "principal." . strtolower(str_replace(' ', '', $school->name)) . "@example.com",
+                'email' => "principal." . $school->id . "@example.com",
                 'role' => 'principal',
                 'school_id' => $school->id,
             ]);
@@ -42,7 +45,7 @@ class DatabaseSeeder extends Seeder
             // Create Health Coordinator for the school
             $coordinator = User::factory()->create([
                 'name' => "Nurse " . fake()->randomElement($filipinoFirstNames) . " " . fake()->randomElement($filipinoLastNames),
-                'email' => "nurse." . strtolower(str_replace(' ', '', $school->name)) . "@example.com",
+                'email' => "nurse." . $school->id . "@example.com",
                 'role' => 'health_coordinator',
                 'school_id' => $school->id,
             ]);

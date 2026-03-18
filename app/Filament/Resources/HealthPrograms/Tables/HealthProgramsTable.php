@@ -29,7 +29,17 @@ class HealthProgramsTable
                 TextColumn::make('target_grade')
                     ->badge(),
                 TextColumn::make('status')
-                    ->badge(),
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'completed' => 'success',
+                        'ongoing' => 'info',
+                        'cancelled' => 'danger',
+                        'planned' => 'warning',
+                        default => 'secondary',
+                    }),
+                TextColumn::make('remarks')
+                    ->limit(50)
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('coordinator.name')
                     ->searchable(),
                 TextColumn::make('created_at')

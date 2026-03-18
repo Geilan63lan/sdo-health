@@ -15,31 +15,36 @@ class StudentsTable
     {
         return $table
             ->columns([
-                TextColumn::make('school.name')
-                    ->searchable(),
                 TextColumn::make('lrn')
+                    ->label('LRN')
                     ->searchable(),
-                TextColumn::make('first_name')
-                    ->searchable(),
-                TextColumn::make('middle_name')
-                    ->searchable(),
-                TextColumn::make('last_name')
-                    ->searchable(),
-                TextColumn::make('suffix')
+                TextColumn::make('name')
+                    ->formatStateUsing(function ($state, $record) {
+                        $name = $record->first_name;
+                        if ($record->middle_name) {
+                            $name .= ' ' . $record->middle_name;
+                        }
+                        if ($record->last_name) {
+                            $name .= ' ' . $record->last_name;
+                        }
+                        if ($record->suffix) {
+                            $name .= ' ' . $record->suffix;
+                        }
+                        return $name;
+                    })
+                    ->searchable(query: function ($query, $search) {
+                        return $query->where('first_name', 'like', "%{$search}%")
+                            ->orWhere('middle_name', 'like', "%{$search}%")
+                            ->orWhere('last_name', 'like', "%{$search}%");
+                    }),
+                TextColumn::make('school.name')
+                    ->label('School')
                     ->searchable(),
                 TextColumn::make('birth_date')
                     ->date()
                     ->sortable(),
                 TextColumn::make('sex')
                     ->badge(),
-                TextColumn::make('address')
-                    ->searchable(),
-                TextColumn::make('guardian_name')
-                    ->searchable(),
-                TextColumn::make('guardian_contact')
-                    ->searchable(),
-                TextColumn::make('guardian_relationship')
-                    ->searchable(),
                 IconColumn::make('is_active')
                     ->boolean(),
                 TextColumn::make('created_at')

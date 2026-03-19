@@ -6,9 +6,8 @@
 
         <title>SDO Legazpi Health System</title>
 
-        <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <link rel="icon" href="https://sdolegazpicity.com/wp-content/uploads/2025/12/cropped-LOGO-sdo-leg-1-1.png" type="image/png">
+        <link rel="apple-touch-icon" href="https://sdolegazpicity.com/wp-content/uploads/2025/12/cropped-LOGO-sdo-leg-1-1.png">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -20,25 +19,27 @@
     <body class="h-full bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased">
         <div class="relative min-h-screen flex flex-col">
             <!-- Navigation -->
-            <nav class="relative z-10 flex items-center justify-between p-6 lg:px-8 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
-                <div class="flex lg:flex-1 items-center gap-3">
-                    <x-app-logo-icon class="size-10 text-blue-600 dark:text-blue-400" />
-                    <span class="text-xl font-bold tracking-tight">SDO Legazpi</span>
-                </div>
+            <nav class="relative z-10 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
+                <div class="mx-auto max-w-7xl px-6 py-6 lg:px-8 flex items-center justify-between">
+                    <div class="flex lg:flex-1 items-center gap-3">
+                        <img src="https://sdolegazpicity.com/wp-content/uploads/2025/12/cropped-LOGO-sdo-leg-1-1.png" alt="SDO Legazpi Logo" class="h-8 w-auto">
+                        <span class="text-xl font-bold tracking-tight">School Division Office - Legazpi</span>
+                    </div>
 
-                <div class="flex items-center gap-4">
-                    @auth
-                        <a href="{{ route('filament.admin.pages.dashboard') }}" class="rounded-full bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all">
-                            Go to Dashboard
-                        </a>
-                    @else
-                        <a href="{{ route('login') }}" class="text-sm font-semibold leading-6 hover:text-blue-600 transition-colors">Log in</a>
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="rounded-full bg-slate-900 dark:bg-white dark:text-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-slate-700 dark:hover:bg-slate-200 transition-all">
-                                Register
+                    <div class="flex items-center gap-4">
+                        @auth
+                            <a href="{{ route('filament.admin.pages.dashboard') }}" class="rounded-full bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all">
+                                Go to Dashboard
                             </a>
-                        @endif
-                    @endauth
+                        @else
+                            <a href="{{ route('login') }}" class="text-sm font-semibold leading-6 hover:text-blue-600 transition-colors">Log in</a>
+                            @if (Route::has('register'))
+                                <a href="{{ route('register') }}" class="rounded-full bg-slate-900 dark:bg-white dark:text-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-slate-700 dark:hover:bg-slate-200 transition-all">
+                                    Register
+                                </a>
+                            @endif
+                        @endauth
+                    </div>
                 </div>
             </nav>
 
@@ -51,7 +52,7 @@
 
                 <div class="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:flex lg:items-center lg:gap-x-10 lg:px-8">
                     <div class="mx-auto max-w-2xl lg:mx-0 lg:flex-auto">
-                        <div class="flex">
+                        <div class="flex flex-col items-start gap-4">
                             <div class="relative rounded-full px-3 py-1 text-sm leading-6 text-slate-600 dark:text-slate-400 ring-1 ring-slate-900/10 dark:ring-slate-100/10 hover:ring-slate-900/20 dark:hover:ring-slate-100/20">
                                 Official Health Management Portal.
                             </div>
@@ -112,7 +113,9 @@
                     <div class="mx-auto max-w-7xl px-6 lg:px-8">
                         <div class="mx-auto max-w-2xl lg:text-center">
                             <h2 class="text-base font-semibold leading-7 text-blue-600">Health Services</h2>
-                            <p class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl text-slate-900 dark:text-white">Everything you need to manage student health</p>
+                            <p class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl text-slate-900 dark:text-white text-balance">
+                                Everything you need to manage student health
+                            </p>
                             <p class="mt-6 text-lg leading-8 text-slate-600 dark:text-slate-400">
                                 A comprehensive toolset for school health coordinators and division personnel.
                             </p>

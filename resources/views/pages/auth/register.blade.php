@@ -13,7 +13,7 @@
                 :label="__('Name')"
                 :value="old('name')"
                 type="text"
-                required
+                required="true"
                 autofocus
                 autocomplete="name"
                 :placeholder="__('Full name')"
@@ -25,7 +25,7 @@
                 :label="__('Email address')"
                 :value="old('email')"
                 type="email"
-                required
+                required="true"
                 autocomplete="email"
                 placeholder="email@example.com"
             />
@@ -35,7 +35,7 @@
                 name="password"
                 :label="__('Password')"
                 type="password"
-                required
+                required="true"
                 autocomplete="new-password"
                 :placeholder="__('Password')"
                 viewable
@@ -46,7 +46,7 @@
                 name="password_confirmation"
                 :label="__('Confirm password')"
                 type="password"
-                required
+                required="true"
                 autocomplete="new-password"
                 :placeholder="__('Confirm password')"
                 viewable
@@ -61,7 +61,7 @@
 
         <div class="space-x-1 rtl:space-x-reverse text-center text-sm text-zinc-600 dark:text-zinc-400">
             <span>{{ __('Already have an account?') }}</span>
-            <flux:link :href="route('login')" wire:navigate>{{ __('Log in') }}</flux:link>
+            <flux:link :href="route('login')" wire:navigate="true">{{ __('Log in') }}</flux:link>
         </div>
     </div>
 </x-layouts::auth>

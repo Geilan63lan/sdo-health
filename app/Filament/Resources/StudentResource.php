@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\Students\Pages\EditStudent;
 use App\Filament\Resources\Students\Pages\ListStudents;
+use App\Filament\Resources\Students\Pages\ViewStudent;
 use App\Filament\Resources\Students\Schemas\StudentForm;
 use App\Filament\Resources\Students\Tables\StudentsTable;
 use App\Models\Student;
@@ -60,6 +62,8 @@ class StudentResource extends Resource
     {
         return [
             'index' => ListStudents::route('/'),
+            'view' => ViewStudent::route('/{record}'),
+            'edit' => EditStudent::route('/{record}/edit'),
         ];
     }
 }

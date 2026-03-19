@@ -2,15 +2,14 @@
 
 namespace App\Filament\Resources\Students\RelationManagers;
 
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Actions;
-use Filament\Actions\CreateAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 
 class HealthRecordsRelationManager extends RelationManager
 {
@@ -24,7 +23,6 @@ class HealthRecordsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->recordsTitleAttribute('record_date')
             ->columns([
                 Tables\Columns\TextColumn::make('record_date')
                     ->label('Date')
@@ -55,8 +53,10 @@ class HealthRecordsRelationManager extends RelationManager
                 EditAction::make(),
                 DeleteAction::make(),
             ])
-            ->toolbarActions([
+            ->headerActions([
                 CreateAction::make(),
+            ])
+            ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

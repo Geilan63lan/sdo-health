@@ -67,14 +67,10 @@ class SchoolsTable
                     ->label('Category'),
             ])
             ->recordActions([
-                ViewAction::make()
-                    ->extraModalFooterActions([
-                        EditAction::make()
-                            ->cancelParentActions(),
-                    ]),
+                ViewAction::make(),
                 EditAction::make(),
             ])
-            ->toolbarActions([
+            ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

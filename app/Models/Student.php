@@ -62,6 +62,11 @@ class Student extends Model
         return $this->hasOne(MedicalHistory::class);
     }
 
+    public function healthExaminations(): HasMany
+    {
+        return $this->hasMany(HealthExamination::class);
+    }
+
     public function getFullNameAttribute(): string
     {
         return trim("{$this->first_name} {$this->middle_name} {$this->last_name} {$this->suffix}");

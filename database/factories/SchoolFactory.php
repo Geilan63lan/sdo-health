@@ -42,9 +42,9 @@ class SchoolFactory extends Factory
         $types = ['Elementary School', 'National High School', 'Integrated School', 'Science High School', 'Child Development Center'];
 
         return [
+            'school_id' => fake()->unique()->numerify('SCH-#####'),
             'name' => 'Legazpi City '.fake()->randomElement($types).' '.fake()->unique()->numberBetween(1, 20),
             'address' => fake()->randomElement($legazpiBarangays).', Legazpi City, Albay',
-            'level' => fake()->randomElement(['elementary', 'jhs', 'shs', 'integrated']),
             'contact_number' => fake()->phoneNumber(),
             'email' => fake()->unique()->safeEmail(),
             'principal_name' => fake()->name(),

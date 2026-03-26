@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\Students\Pages\CreateStudent;
 use App\Filament\Resources\Students\Pages\EditStudent;
 use App\Filament\Resources\Students\Pages\ListStudents;
 use App\Filament\Resources\Students\Pages\ViewStudent;
@@ -55,6 +56,7 @@ class StudentResource extends Resource
         return [
             \App\Filament\Resources\Students\RelationManagers\MedicalHistoryRelationManager::class,
             \App\Filament\Resources\Students\RelationManagers\HealthExaminationsRelationManager::class,
+            \App\Filament\Resources\Students\RelationManagers\HealthProgressTimelineRelationManager::class,
             \App\Filament\Resources\Students\RelationManagers\VaccinationsRelationManager::class,
         ];
     }
@@ -63,6 +65,7 @@ class StudentResource extends Resource
     {
         return [
             'index' => ListStudents::route('/'),
+            'create' => CreateStudent::route('/create'),
             'view' => ViewStudent::route('/{record}'),
             'edit' => EditStudent::route('/{record}/edit'),
         ];

@@ -25,6 +25,7 @@ class Student extends Model
         'guardian_contact',
         'guardian_relationship',
         'is_active',
+        'current_grade_level',
     ];
 
     protected $casts = [

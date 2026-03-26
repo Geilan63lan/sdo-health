@@ -93,6 +93,7 @@ class HealthExaminationsRelationManager extends RelationManager
             ])
             ->headerActions([
                 CreateAction::make()
+                    ->fillForm(fn (RelationManager $livewire): array => $this->getAutoFillData($livewire->getOwnerRecord()))
                     ->mutateFormDataUsing(function (array $data): array {
                         $data['examined_by'] = auth()->id();
 
@@ -104,5 +105,52 @@ class HealthExaminationsRelationManager extends RelationManager
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    private function getAutoFillData($student): array
+    {
+        $data = [];
+
+        $lastExam = $student->healthExaminations()
+            ->orderByDesc('date_of_examination')
+            ->first();
+
+        if ($lastExam) {
+            $data['is_4ps_beneficiary'] = $lastExam->is_4ps_beneficiary;
+            $data['is_sbfp_beneficiary'] = $lastExam->is_sbfp_beneficiary;
+            $data['immunization_kind'] = $lastExam->immunization_kind;
+            $data['height_cm'] = $lastExam->height_cm;
+            $data['weight_kg'] = $lastExam->weight_kg;
+            $data['ns_bmi_for_age'] = $lastExam->ns_bmi_for_age;
+            $data['ns_height_for_age'] = $lastExam->ns_height_for_age;
+            $nextGrade = $this->getNextGradeLevel($lastExam->grade_level);
+            if ($nextGrade) {
+                $data['grade_level'] = $nextGrade;
+            }
+        } elseif ($student->current_grade_level) {
+            $data['grade_level'] = $student->current_grade_level;
+        }
+
+        return $data;
+    }
+
+    private function getNextGradeLevel(?string $current): ?string
+    {
+        $sequence = [
+            'Kinder' => 'Grade 1',
+            'Grade 1' => 'Grade 2',
+            'Grade 2' => 'Grade 3',
+            'Grade 3' => 'Grade 4',
+            'Grade 4' => 'Grade 5',
+            'Grade 5' => 'Grade 6',
+            'Grade 6' => 'Grade 7',
+            'Grade 7' => 'Grade 8',
+            'Grade 8' => 'Grade 9',
+            'Grade 9' => 'Grade 10',
+            'Grade 10' => 'Grade 11',
+            'Grade 11' => 'Grade 12',
+        ];
+
+        return $sequence[$current] ?? null;
     }
 }

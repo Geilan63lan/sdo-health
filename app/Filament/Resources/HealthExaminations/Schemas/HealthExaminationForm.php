@@ -55,7 +55,7 @@ class HealthExaminationForm
                         TextInput::make('designation')
                             ->label('Designation/Title'),
                     ])
-                    ->columns(2),
+                    ->columns(1),
 
                 // Section 2: Physical Growth
                 Section::make('Physical Growth')
@@ -83,7 +83,7 @@ class HealthExaminationForm
                             ->options($map['ns_height'])
                             ->required(),
                     ])
-                    ->columns(2),
+                    ->columns(1),
 
                 // Section 3: Interventions
                 Section::make('Interventions')
@@ -102,7 +102,7 @@ class HealthExaminationForm
                             ->label('Immunization Kind')
                             ->columnSpanFull(),
                     ])
-                    ->columns(2),
+                    ->columns(1),
 
                 // Section 4: Vitals & Development
                 Section::make('Vitals & Development')
@@ -118,7 +118,7 @@ class HealthExaminationForm
                         TextInput::make('respiratory_rate')
                             ->label('Respiratory Rate'),
                     ])
-                    ->columns(2),
+                    ->columns(1),
 
                 // Section 5: Sensory Screenings
                 Section::make('Sensory Screenings')
@@ -136,7 +136,7 @@ class HealthExaminationForm
                             ->label('Auditory (Right)')
                             ->options($map['screenings']),
                     ])
-                    ->columns(2),
+                    ->columns(1),
 
                 // Section 6: Systematic Findings
                 Section::make('Systematic Findings')
@@ -160,7 +160,7 @@ class HealthExaminationForm
                             ->label('Deformities')
                             ->options($map['deformities']),
                     ])
-                    ->columns(2),
+                    ->columns(1),
 
                 // Section 7: Others
                 Section::make('Others')

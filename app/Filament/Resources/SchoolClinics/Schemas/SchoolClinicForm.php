@@ -15,23 +15,36 @@ class SchoolClinicForm
         return $schema
             ->components([
                 Select::make('school_id')
+                    ->label('School')
                     ->relationship('school', 'name')
                     ->required(),
                 TextInput::make('clinic_name')
+                    ->label('Clinic Name')
                     ->required(),
                 TextInput::make('location')
+                    ->label('Location')
                     ->required(),
-                TextInput::make('head_nurse_name'),
-                TextInput::make('nurse_contact'),
+                TextInput::make('head_nurse_name')
+                    ->label('Head Nurse Name'),
+                TextInput::make('nurse_contact')
+                    ->label('Nurse Contact'),
                 TextInput::make('bed_count')
+                    ->label('Bed Count')
                     ->required()
                     ->numeric()
                     ->default(0),
                 Textarea::make('equipment_inventory')
+                    ->label('Equipment Inventory')
+                    ->rows(3)
                     ->columnSpanFull(),
                 Textarea::make('operating_hours')
+                    ->label('Operating Hours')
+                    ->rows(3)
                     ->columnSpanFull(),
                 Toggle::make('is_active')
+                    ->label('Active')
+                    ->helperText('Enable if this clinic is currently operational.')
+                    ->default(true)
                     ->required(),
             ]);
     }

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\SchoolClinics\Pages\CreateSchoolClinic;
 use App\Filament\Resources\SchoolClinics\Pages\EditSchoolClinic;
 use App\Filament\Resources\SchoolClinics\Pages\ListSchoolClinics;
 use App\Filament\Resources\SchoolClinics\Schemas\SchoolClinicForm;
@@ -52,7 +51,6 @@ class SchoolClinicResource extends Resource
     {
         return [
             'index' => ListSchoolClinics::route('/'),
-            'create' => CreateSchoolClinic::route('/create'),
             'edit' => EditSchoolClinic::route('/{record}/edit'),
         ];
     }

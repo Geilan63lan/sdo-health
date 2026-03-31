@@ -5,7 +5,8 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Models\School;
 use App\Models\Student;
-use App\Models\HealthRecord;
+// TODO: HealthRecord was replaced by HealthExamination
+// use App\Models\HealthRecord;
 use App\Models\HealthProgram;
 use App\Models\Vaccination;
 use App\Models\Absence;
@@ -67,11 +68,13 @@ class DatabaseSeeder extends Seeder
                 'last_name' => fn() => fake()->randomElement($filipinoLastNames),
                 'guardian_name' => fn() => fake()->randomElement($filipinoFirstNames) . " " . fake()->randomElement($filipinoLastNames),
             ])->each(function ($student) use ($coordinator) {
-                // Add Health Records
-                HealthRecord::factory(rand(1, 3))->create([
-                    'student_id' => $student->id,
-                    'recorded_by' => $coordinator->id,
-                ]);
+                // TODO: HealthRecord was replaced by HealthExamination
+                // Kept for reference - commented out to prevent errors
+                // // Add Health Records
+                // HealthRecord::factory(rand(1, 3))->create([
+                //     'student_id' => $student->id,
+                //     'recorded_by' => $coordinator->id,
+                // ]);
 
                 // Add Vaccinations
                 Vaccination::factory(rand(1, 4))->create([

@@ -14,6 +14,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\Permission\Traits\HasPermissions;
+use App\Models\School;
+use App\Models\HealthRecord;
+use App\Models\Vaccination;
+use App\Models\Absence;
+use App\Models\HealthProgram;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -46,10 +51,12 @@ class User extends Authenticatable implements FilamentUser
         return $this->belongsTo(School::class);
     }
 
-    public function healthRecords(): HasMany
-    {
-        return $this->hasMany(HealthRecord::class, 'recorded_by');
-    }
+    // TODO: HealthRecord was replaced by HealthExamination
+    // Kept for reference - commented out to prevent errors
+    // public function healthRecords(): HasMany
+    // {
+    //     return $this->hasMany(HealthRecord::class, 'recorded_by');
+    // }
 
     public function vaccinations(): HasMany
     {

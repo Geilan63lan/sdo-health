@@ -44,7 +44,7 @@ class NewUserWaitingApproval extends Notification
             ->actions([
                 \Filament\Notifications\Actions\Action::make('view')
                     ->button()
-                    ->url(\App\Filament\Resources\UserApprovalResource::getUrl('index')),
+                    ->url(\App\Filament\Resources\UserResource::getUrl('index')),
             ])
             ->getDatabaseMessage();
     }

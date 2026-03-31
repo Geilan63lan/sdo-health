@@ -18,20 +18,20 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static UnitEnum|string|null $navigationGroup = 'School Management';
+    protected static UnitEnum|string|null $navigationGroup = 'User Management';
 
-    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-user';
+    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-user-group';
 
-    protected static ?string $navigationLabel = 'Personnel & Coordinators';
+    protected static ?string $navigationLabel = 'Users';
 
     public static function canAccess(): bool
     {
         return auth()->user()->hasRole('sdo_admin');
     }
 
-    protected static ?string $label = 'Personnel';
+    protected static ?string $label = 'User';
 
-    protected static ?string $pluralLabel = 'Personnel & Coordinators';
+    protected static ?string $pluralLabel = 'Users';
 
     public static function form(Schema $schema): Schema
     {

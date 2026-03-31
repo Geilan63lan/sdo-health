@@ -8,10 +8,13 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser
@@ -94,5 +97,65 @@ class User extends Authenticatable implements FilamentUser
         }
 
         return true;
+    }
+
+    /**
+     * Override Spatie's permissions relation to include expires_at pivot column.
+     */
+    public function permissions(): MorphToMany
+    {
+        $relation = $this->morphToMany(
+            config('permission.models.permission'),
+            'model',
+            config('permission.table_names.model_has_permissions'),
+            config('permission.column_names.model_morph_key'),
+        )->withPivot('expires_at');
+
+        return $relation;
+    }
+
+    /**
+     * Override Spatie's getDirectPermissions to exclude expired temporary grants.
+     */
+    public function getDirectPermissions(): Collection
+    {
+        return $this->permissions->filter(function (Permission $permission) {
+            $expiresAt = $permission->pivot->expires_at;
+
+            return $expiresAt === null || now()->lt($expiresAt);
+        });
+    }
+
+    /**
+     * Override Spatie's hasDirectPermission to exclude expired temporary grants.
+     */
+    public function hasDirectPermission($permission): bool
+    {
+        $permission = $this->filterPermission($permission);
+
+        return $this->getDirectPermissions()
+            ->contains($permission->getKeyName(), $permission->getKey());
+    }
+
+    /**
+     * Override Spatie's getAllPermissions to exclude expired temporary grants.
+     */
+    public function getAllPermissions(): Collection
+    {
+        $permissions = $this->getDirectPermissions();
+
+        if (! $this instanceof Permission) {
+            $permissions = $permissions->merge($this->getPermissionsViaRoles());
+        }
+
+        return $permissions->sort()->values();
+    }
+
+    /**
+     * Get all direct permissions including expired ones (for admin display purposes).
+     */
+    public function getAllDirectPermissions(): Collection
+    {
+        return $this->permissions;
     }
 }

@@ -98,7 +98,7 @@ class UserForm
                     ->schema([
                         CheckboxList::make('permission_overrides')
                             ->options(fn () => Permission::pluck('name', 'name')->toArray())
-                            ->descriptions(fn (User $record) => self::permissionDescriptions($record))
+                            ->descriptions(fn (?User $record) => $record ? self::permissionDescriptions($record) : [])
                             ->columns(2)
                             ->searchable()
                             ->afterStateHydrated(function (CheckboxList $component, ?User $record) {

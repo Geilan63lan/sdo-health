@@ -14,12 +14,19 @@ beforeEach(function () {
     // Create permissions
     $this->permissions = collect([
         'view_admin_panel',
+        // Manage permissions
         'manage_schools',
         'manage_students',
         'manage_health_records',
         'manage_vaccinations',
-        'manage_absences',
         'manage_health_programs',
+        // View permissions
+        'view_schools',
+        'view_students',
+        'view_health_records',
+        'view_vaccinations',
+        'view_absences',
+        'view_health_programs',
     ])->map(fn ($name) => Permission::create(['name' => $name]));
 
     // Create roles
@@ -34,13 +41,17 @@ beforeEach(function () {
         'manage_students',
         'manage_health_records',
         'manage_vaccinations',
-        'manage_absences',
+        'view_absences',
         'manage_health_programs',
     ]);
     $this->principalRole->givePermissionTo([
         'view_admin_panel',
-        'manage_students',
-        'manage_health_records',
+        'view_schools',
+        'view_students',
+        'view_health_records',
+        'view_vaccinations',
+        'view_absences',
+        'view_health_programs',
     ]);
 });
 
@@ -56,7 +67,7 @@ test('health coordinator user has correct role-based permissions', function () {
     expect($user->hasPermissionTo('manage_students'))->toBeTrue();
     expect($user->hasPermissionTo('manage_health_records'))->toBeTrue();
     expect($user->hasPermissionTo('manage_vaccinations'))->toBeTrue();
-    expect($user->hasPermissionTo('manage_absences'))->toBeTrue();
+    expect($user->hasPermissionTo('view_absences'))->toBeTrue();
     expect($user->hasPermissionTo('manage_health_programs'))->toBeTrue();
     expect($user->hasPermissionTo('manage_schools'))->toBeFalse();
 });
@@ -176,7 +187,7 @@ test('changing role updates Spatie role assignment', function () {
 
     // Verify permissions updated to match new role
     expect($user->hasPermissionTo('manage_vaccinations'))->toBeTrue();
-    expect($user->hasPermissionTo('manage_absences'))->toBeTrue();
+    expect($user->hasPermissionTo('view_absences'))->toBeTrue();
 });
 
 test('revoking direct permission removes it from model_has_permissions', function () {

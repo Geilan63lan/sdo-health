@@ -87,12 +87,15 @@ class HealthExaminationsTable
             ])
             ->recordActions([
                 \Filament\Actions\ViewAction::make(),
-                \Filament\Actions\EditAction::make(),
-                \Filament\Actions\DeleteAction::make(),
+                \Filament\Actions\EditAction::make()
+                    ->visible(fn () => auth()->user()->hasRole('sdo_admin') || auth()->user()->hasPermissionTo('manage_health_records')),
+                \Filament\Actions\DeleteAction::make()
+                    ->visible(fn () => auth()->user()->hasRole('sdo_admin') || auth()->user()->hasPermissionTo('manage_health_records')),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->visible(fn () => auth()->user()->hasRole('sdo_admin') || auth()->user()->hasPermissionTo('manage_health_records')),
                 ]),
             ]);
     }

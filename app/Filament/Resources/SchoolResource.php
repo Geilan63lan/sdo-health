@@ -28,7 +28,7 @@ class SchoolResource extends Resource
 
     public static function canAccess(): bool
     {
-        return auth()->user()->hasRole('sdo_admin');
+        return auth()->user()->hasRole('sdo_admin') || auth()->user()->hasPermissionTo('view_schools');
     }
 
     public static function form(Schema $schema): Schema

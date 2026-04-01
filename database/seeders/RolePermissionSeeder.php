@@ -17,22 +17,29 @@ class RolePermissionSeeder extends Seeder
         // Create permissions
         $permissions = [
             'view_admin_panel',
+            // Manage permissions (full CRUD)
             'manage_schools',
             'manage_students',
             'manage_health_records',
             'manage_vaccinations',
-            'manage_absences',
             'manage_health_programs',
+            // View permissions (view only, no edit/add/delete)
+            'view_schools',
+            'view_students',
+            'view_health_records',
+            'view_vaccinations',
+            'view_absences',
+            'view_health_programs',
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::firstOrCreate(['name' => $permission]);
         }
 
         // Create roles
-        $sdoAdminRole = Role::create(['name' => 'sdo_admin']);
-        $healthCoordinatorRole = Role::create(['name' => 'health_coordinator']);
-        $principalRole = Role::create(['name' => 'principal']);
+        $sdoAdminRole = Role::firstOrCreate(['name' => 'sdo_admin']);
+        $healthCoordinatorRole = Role::firstOrCreate(['name' => 'health_coordinator']);
+        $principalRole = Role::firstOrCreate(['name' => 'principal']);
 
         // Assign permissions to roles
         $sdoAdminRole->givePermissionTo($permissions); // SDO Admin has all permissions
@@ -42,14 +49,18 @@ class RolePermissionSeeder extends Seeder
             'manage_students',
             'manage_health_records',
             'manage_vaccinations',
-            'manage_absences',
             'manage_health_programs',
+            'view_absences',
         ]);
 
         $principalRole->givePermissionTo([
             'view_admin_panel',
-            'manage_students',
-            'manage_health_records',
+            'view_schools',
+            'view_students',
+            'view_health_records',
+            'view_vaccinations',
+            'view_absences',
+            'view_health_programs',
         ]);
 
         // Assign roles to existing users based on their current role column

@@ -68,11 +68,13 @@ class SchoolsTable
             ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make(),
+                EditAction::make()
+                    ->visible(fn () => auth()->user()->hasRole('sdo_admin')),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->visible(fn () => auth()->user()->hasRole('sdo_admin')),
                 ]),
             ]);
     }

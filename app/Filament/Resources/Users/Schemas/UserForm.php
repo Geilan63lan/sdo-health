@@ -88,10 +88,14 @@ class UserForm
                     ->collapsible(),
 
                 Section::make('Permission Overrides')
-                    ->description('Grant or revoke permissions beyond the user\'s role defaults.')
+                    ->description('Grant or revoke view permissions beyond the user\'s role defaults.')
                     ->schema([
                         CheckboxList::make('permission_overrides')
-                            ->options(fn () => Permission::pluck('name', 'name')->toArray())
+                            ->options(fn () => Permission::query()
+                                ->where('name', 'like', 'view_%')
+                                ->whereNot('name', 'view_admin_panel')
+                                ->pluck('name', 'name')
+                                ->toArray())
                             ->descriptions(fn (?User $record) => $record ? self::permissionDescriptions($record) : [])
                             ->columns(2)
                             ->searchable()
@@ -140,7 +144,13 @@ class UserForm
             ->get();
 
         $descriptions = [];
-        foreach (Permission::pluck('name')->toArray() as $permissionName) {
+        $viewPermissions = Permission::query()
+            ->where('name', 'like', 'view_%')
+            ->whereNot('name', 'view_admin_panel')
+            ->pluck('name')
+            ->toArray();
+
+        foreach ($viewPermissions as $permissionName) {
             if (in_array($permissionName, $rolePermissionNames)) {
                 $directGrant = $directPermissions->firstWhere('name', $permissionName);
                 if ($directGrant && $directGrant->pivot->expires_at) {

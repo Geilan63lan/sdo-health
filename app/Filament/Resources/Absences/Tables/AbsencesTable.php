@@ -58,13 +58,14 @@ class AbsencesTable
                 ViewAction::make()
                     ->extraModalFooterActions([
                         EditAction::make()
+                            ->visible(fn () => auth()->user()->hasRole('sdo_admin'))
                             ->cancelParentActions(),
                     ]),
-                EditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->visible(fn () => auth()->user()->hasRole('sdo_admin')),
                 ]),
             ]);
     }

@@ -66,11 +66,13 @@ class HealthProgramsTable
                 //
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->visible(fn () => auth()->user()->hasRole('sdo_admin') || auth()->user()->hasPermissionTo('manage_health_programs')),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->visible(fn () => auth()->user()->hasRole('sdo_admin') || auth()->user()->hasPermissionTo('manage_health_programs')),
                 ]),
             ]);
     }

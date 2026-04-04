@@ -14,6 +14,10 @@
 {{-- ═══════════════════════════════════════════════════════
      SCOPED STYLES — loaded inline, always works in Filament
 ═══════════════════════════════════════════════════════ --}}
+<div
+    x-data="{ toastShow: false, toastGrade: '' }"
+    x-on:saved.window="toastShow = true; toastGrade = $event.detail.grade; setTimeout(() => toastShow = false, 2500)"
+>
 <style>
 .hem { font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px; color: #1e293b; position: relative; }
 
@@ -173,15 +177,7 @@
 .hem-toast svg { width: 14px; height: 14px; flex-shrink: 0; }
 </style>
 
-@php
-    $dataRowClasses = 'group';
-@endphp
-
-<div class="hem"
-    x-data="{ toastShow: false, toastGrade: '' }"
-    x-on:saved.window="toastShow = true; toastGrade = $event.detail.grade; setTimeout(() => toastShow = false, 2500)"
->
-
+<div class="hem">
 {{-- ═══ HEADER ═══ --}}
 <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px;">
     <div>
@@ -485,7 +481,6 @@
 </tr>
 
 {{-- ══ SAVE ROW ══ --}}
-{{-- Uses Alpine $wire.set + $wire.call to avoid Livewire argument parsing issues --}}
 <tr class="hem-save-row">
     <td class="f-col">Action</td>
     @foreach ($gradeLevels as $grade)
@@ -493,12 +488,15 @@
         @if ($this->isVisible($grade))
         <td style="padding:6px 4px; background:#f8fafc; border-right:1px solid #f1f5f9;">
             <button
-                wire:click="save('{{ $grade }}')"
+                wire:click="performSave({{ $gradeIndex }})"
                 wire:loading.attr="disabled"
-                wire:target="save('{{ $grade }}')"
+                wire:target="performSave({{ $gradeIndex }})"
                 class="hem-save-btn">
-                <span wire:loading.remove wire:target="save('{{ $grade }}')">Save</span>
-                <span wire:loading wire:target="save('{{ $grade }}')">Saving…</span>
+                <span wire:loading.remove wire:target="performSave({{ $gradeIndex }})">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" style="width:11px;height:11px;display:inline;vertical-align:middle;margin-right:2px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    Save
+                </span>
+                <span wire:loading wire:target="performSave({{ $gradeIndex }})">Saving…</span>
             </button>
         </td>
         @endif
@@ -517,3 +515,5 @@
 </div>
 
 </div>
+
+</div>{{-- end single root --}}

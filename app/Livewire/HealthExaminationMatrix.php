@@ -10,123 +10,101 @@ use Livewire\Component;
 
 class HealthExaminationMatrix extends Component
 {
-    public int $studentId = 0;
+    // Public properties — persisted in Livewire snapshot between requests
+    public int     $studentId;
+    public string  $studentName        = '';
+    public ?string $studentGradeLevel  = null;
+    public bool    $showAll            = false;
+    public array   $data               = [];
 
-    public string $studentName = '';
-
-    public ?string $studentGradeLevel = null;
-
-    public bool $showAll = false;
-
-    public array $data = [];
-
-    public int $selectedGradeIndex = -1;   // set from blade before saveGrade()
-
+    // Not persisted — re-fetched when needed
     protected ?Student $student = null;
 
-    public function mount(int|Student|null $record = null): void
+    /**
+     * Accept the student's ID (int) — not the model.
+     * Livewire 3 safely persists primitives in the snapshot.
+     * Injecting a model directly causes re-hydration failures.
+     *
+     * In your blade, pass the ID:
+     *   @livewire('health-examination-matrix', ['studentId' => $record->id])
+     */
+    public function mount(int $studentId): void
     {
-        if ($record instanceof Student) {
-            $this->student = $record;
-        } elseif (is_int($record)) {
-            $this->student = Student::find($record);
-        } elseif ($record !== null) {
-            $this->student = Student::find($record);
-        }
+        $this->studentId = $studentId;
 
-        if (! $this->student) {
-            return;
-        }
+        $student = Student::findOrFail($studentId);
 
-        $this->studentId = $this->student->id;
-        $this->studentName = $this->student->full_name;
-        $this->studentGradeLevel = $this->student->current_grade_level;
+        $this->studentName       = $student->full_name;
+        $this->studentGradeLevel = $student->current_grade_level;
+
         $this->loadData();
     }
 
-    public function getStudent(): ?Student
+    public function getStudent(): Student
     {
-        return $this->student ??= Student::find($this->studentId);
+        return $this->student ??= Student::findOrFail($this->studentId);
     }
 
     public function loadData(): void
     {
-        $student = $this->getStudent();
-
-        $exams = HealthExamination::where('student_id', $student->id)
+        $exams = HealthExamination::where('student_id', $this->studentId)
             ->get()
             ->keyBy('grade_level');
 
         foreach (GradeLevel::ordered() as $grade) {
-            $exam = $exams[$grade] ?? null;
+            $exam               = $exams[$grade] ?? null;
             $this->data[$grade] = [
-                'id' => $exam?->id,
+                'id'                  => $exam?->id,
                 'date_of_examination' => $exam?->date_of_examination?->format('Y-m-d') ?? '',
-                'height_cm' => $exam?->height_cm ?? '',
-                'weight_kg' => $exam?->weight_kg ?? '',
-                'ns_bmi_for_age' => $exam?->ns_bmi_for_age ?? '',
-                'ns_height_for_age' => $exam?->ns_height_for_age ?? '',
-                'is_4ps_beneficiary' => $exam?->is_4ps_beneficiary ?? false,
+                'height_cm'           => $exam?->height_cm ?? '',
+                'weight_kg'           => $exam?->weight_kg ?? '',
+                'ns_bmi_for_age'      => $exam?->ns_bmi_for_age ?? '',
+                'ns_height_for_age'   => $exam?->ns_height_for_age ?? '',
+                'is_4ps_beneficiary'  => $exam?->is_4ps_beneficiary ?? false,
                 'is_sbfp_beneficiary' => $exam?->is_sbfp_beneficiary ?? false,
-                'deworming_july' => $exam?->deworming_july ?? false,
-                'deworming_january' => $exam?->deworming_january ?? false,
-                'iron_supplementation' => $exam?->iron_supplementation ?? false,
-                'immunization_kind' => $exam?->immunization_kind ?? '',
-                'menarche' => $exam?->menarche ?? '',
-                'temperature' => $exam?->temperature ?? '',
-                'blood_pressure' => $exam?->blood_pressure ?? '',
-                'pulse_rate' => $exam?->pulse_rate ?? '',
-                'respiratory_rate' => $exam?->respiratory_rate ?? '',
-                'vision_l' => $exam?->vision_l ?? '',
-                'vision_r' => $exam?->vision_r ?? '',
-                'auditory_l' => $exam?->auditory_l ?? '',
-                'auditory_r' => $exam?->auditory_r ?? '',
-                'skin_scalp' => $exam?->skin_scalp ?? '',
-                'eyes_ears_nose' => $exam?->eyes_ears_nose ?? '',
-                'mouth_neck_throat' => $exam?->mouth_neck_throat ?? '',
-                'lungs_heart' => $exam?->lungs_heart ?? '',
-                'abdomen' => $exam?->abdomen ?? '',
-                'deformities' => $exam?->deformities ?? '',
-                'others_specify' => $exam?->others_specify ?? '',
+                'deworming_july'      => $exam?->deworming_july ?? false,
+                'deworming_january'   => $exam?->deworming_january ?? false,
+                'iron_supplementation'=> $exam?->iron_supplementation ?? false,
+                'immunization_kind'   => $exam?->immunization_kind ?? '',
+                'menarche'            => $exam?->menarche ?? '',
+                'temperature'         => $exam?->temperature ?? '',
+                'blood_pressure'      => $exam?->blood_pressure ?? '',
+                'pulse_rate'          => $exam?->pulse_rate ?? '',
+                'respiratory_rate'    => $exam?->respiratory_rate ?? '',
+                'vision_l'            => $exam?->vision_l ?? '',
+                'vision_r'            => $exam?->vision_r ?? '',
+                'auditory_l'          => $exam?->auditory_l ?? '',
+                'auditory_r'          => $exam?->auditory_r ?? '',
+                'skin_scalp'          => $exam?->skin_scalp ?? '',
+                'eyes_ears_nose'      => $exam?->eyes_ears_nose ?? '',
+                'mouth_neck_throat'   => $exam?->mouth_neck_throat ?? '',
+                'lungs_heart'         => $exam?->lungs_heart ?? '',
+                'abdomen'             => $exam?->abdomen ?? '',
+                'deformities'         => $exam?->deformities ?? '',
+                'others_specify'      => $exam?->others_specify ?? '',
             ];
         }
     }
 
-    public function save(string $grade): void
-    {
-        $grades = GradeLevel::ordered();
-        $index = array_search($grade, $grades);
-
-        if ($index === false) {
-            return;
-        }
-
-        $this->selectedGradeIndex = $index;
-        $this->performSave();
-    }
-
     /**
-     * No arguments — reads $this->selectedGradeIndex set from the blade.
-     * Avoids Livewire argument-parsing issues with spaces in grade names.
+     * Accepts a grade index (0–12) — plain int avoids Livewire
+     * argument-parsing issues with strings that contain spaces.
      */
-    public function performSave(): void
+    public function performSave(int $gradeIndex): void
     {
         $grades = GradeLevel::ordered();
 
-        if (! array_key_exists($this->selectedGradeIndex, $grades)) {
+        if (! array_key_exists($gradeIndex, $grades)) {
             return;
         }
 
-        $grade = $grades[$this->selectedGradeIndex];
-        $student = $this->getStudent();
-
-        if (! $student) {
-            return;
-        }
-
+        $grade     = $grades[$gradeIndex];
         $gradeData = $this->data[$grade] ?? [];
 
-        $boolFields = ['is_4ps_beneficiary', 'is_sbfp_beneficiary', 'deworming_july', 'deworming_january', 'iron_supplementation'];
+        $boolFields  = [
+            'is_4ps_beneficiary', 'is_sbfp_beneficiary',
+            'deworming_july', 'deworming_january', 'iron_supplementation',
+        ];
         $floatFields = ['height_cm', 'weight_kg'];
 
         $fillable = [
@@ -141,23 +119,33 @@ class HealthExaminationMatrix extends Component
             'lungs_heart', 'abdomen', 'deformities', 'others_specify',
         ];
 
+        // All non-bool fields: convert empty string -> null so MySQL never gets '' for date/numeric columns
+        $nullableFields = array_merge(
+            ['date_of_examination'],
+            $floatFields,
+            [
+                'ns_bmi_for_age', 'ns_height_for_age', 'immunization_kind', 'menarche',
+                'temperature', 'blood_pressure', 'pulse_rate', 'respiratory_rate',
+                'vision_l', 'vision_r', 'auditory_l', 'auditory_r',
+                'skin_scalp', 'eyes_ears_nose', 'mouth_neck_throat',
+                'lungs_heart', 'abdomen', 'deformities', 'others_specify',
+            ]
+        );
+
         $updateData = [];
         foreach ($fillable as $field) {
             if (! array_key_exists($field, $gradeData)) {
                 continue;
             }
             $value = $gradeData[$field];
-            if (in_array($field, $floatFields)) {
-                $value = $value === '' ? null : (float) $value;
-            }
-            if (in_array($field, $boolFields)) {
-                $value = (bool) $value;
-            }
+            if (in_array($field, $nullableFields)) { $value = $value === '' ? null : $value; }
+            if (in_array($field, $floatFields))    { $value = $value === null ? null : (float) $value; }
+            if (in_array($field, $boolFields))     { $value = (bool) $value; }
             $updateData[$field] = $value;
         }
 
         $record = HealthExamination::updateOrCreate(
-            ['student_id' => $student->id, 'grade_level' => $grade],
+            ['student_id' => $this->studentId, 'grade_level' => $grade],
             array_merge($updateData, ['examined_by' => auth()->id()])
         );
 
@@ -183,15 +171,15 @@ class HealthExaminationMatrix extends Component
     public function getLegendOptions(): array
     {
         return [
-            'ns_bmi' => HealthLegend::options('ns_bmi'),
-            'ns_height' => HealthLegend::options('ns_height'),
-            'screenings' => HealthLegend::options('screenings'),
-            'skin_scalp' => HealthLegend::options('skin_scalp'),
-            'eyes_ears_nose' => HealthLegend::options('eyes_ears_nose'),
+            'ns_bmi'            => HealthLegend::options('ns_bmi'),
+            'ns_height'         => HealthLegend::options('ns_height'),
+            'screenings'        => HealthLegend::options('screenings'),
+            'skin_scalp'        => HealthLegend::options('skin_scalp'),
+            'eyes_ears_nose'    => HealthLegend::options('eyes_ears_nose'),
             'mouth_neck_throat' => HealthLegend::options('mouth_neck_throat'),
-            'lungs_heart' => HealthLegend::options('lungs_heart'),
-            'abdomen' => HealthLegend::options('abdomen'),
-            'deformities' => HealthLegend::options('deformities'),
+            'lungs_heart'       => HealthLegend::options('lungs_heart'),
+            'abdomen'           => HealthLegend::options('abdomen'),
+            'deformities'       => HealthLegend::options('deformities'),
         ];
     }
 
@@ -199,7 +187,7 @@ class HealthExaminationMatrix extends Component
     {
         return view('livewire.health-examination-matrix', [
             'gradeLevels' => GradeLevel::ordered(),
-            'legends' => $this->getLegendOptions(),
+            'legends'     => $this->getLegendOptions(),
         ]);
     }
 }

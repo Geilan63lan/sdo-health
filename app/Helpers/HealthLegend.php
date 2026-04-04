@@ -92,4 +92,22 @@ class HealthLegend
     {
         return self::getMap()[$category][$key] ?? $key ?? 'N/A';
     }
+
+    /**
+     * Get formatted select options for a category.
+     * Returns ['a' => 'a: Normal', 'b' => 'b: Presence of Lice', ...]
+     *
+     * @return array<string, string>
+     */
+    public static function options(string $category): array
+    {
+        $map = self::getMap()[$category] ?? [];
+
+        $options = ['' => '—'];
+        foreach ($map as $key => $label) {
+            $options[$key] = "{$key}: {$label}";
+        }
+
+        return $options;
+    }
 }

@@ -7,12 +7,12 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
-use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -50,8 +50,7 @@ class MedicalHistoryRelationManager extends RelationManager
                             ->columns(2),
                         TextInput::make('allergy_others')
                             ->label('Please specify other allergies')
-                            ->visible(fn (Get $get) => 
-                                $get('has_allergies') && 
+                            ->visible(fn (Get $get) => $get('has_allergies') &&
                                 collect($get('allergy_types'))->contains('others')
                             ),
                     ]),
@@ -75,8 +74,7 @@ class MedicalHistoryRelationManager extends RelationManager
                             ->columns(2),
                         TextInput::make('condition_others')
                             ->label('Please specify other conditions')
-                            ->visible(fn (Get $get) => 
-                                $get('has_medical_conditions') && 
+                            ->visible(fn (Get $get) => $get('has_medical_conditions') &&
                                 collect($get('condition_types'))->contains('others')
                             ),
                     ]),
@@ -107,13 +105,11 @@ class MedicalHistoryRelationManager extends RelationManager
                             ->columns(2),
                         TextInput::make('cancer_type')
                             ->label('Type of Cancer')
-                            ->visible(fn (Get $get) => 
-                                collect($get('family_history'))->contains('cancer')
+                            ->visible(fn (Get $get) => collect($get('family_history'))->contains('cancer')
                             ),
                         TextInput::make('family_history_other')
                             ->label('Other Family History')
-                            ->visible(fn (Get $get) => 
-                                collect($get('family_history'))->contains('others')
+                            ->visible(fn (Get $get) => collect($get('family_history'))->contains('others')
                             ),
                     ]),
 

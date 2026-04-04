@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\HealthExaminations\Tables;
 
+use App\Enums\GradeLevel;
 use App\Helpers\HealthLegend;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -63,21 +64,7 @@ class HealthExaminationsTable
             ->defaultSort('date_of_examination', 'desc')
             ->filters([
                 SelectFilter::make('grade_level')
-                    ->options([
-                        'Kinder' => 'Kinder',
-                        'Grade 1' => 'Grade 1',
-                        'Grade 2' => 'Grade 2',
-                        'Grade 3' => 'Grade 3',
-                        'Grade 4' => 'Grade 4',
-                        'Grade 5' => 'Grade 5',
-                        'Grade 6' => 'Grade 6',
-                        'Grade 7' => 'Grade 7',
-                        'Grade 8' => 'Grade 8',
-                        'Grade 9' => 'Grade 9',
-                        'Grade 10' => 'Grade 10',
-                        'Grade 11' => 'Grade 11',
-                        'Grade 12' => 'Grade 12',
-                    ]),
+                    ->options(GradeLevel::asSelectOptions()),
                 SelectFilter::make('ns_bmi_for_age')
                     ->label('BMI-for-Age')
                     ->options($map['ns_bmi']),

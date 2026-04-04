@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Students\Tables;
 
+use App\Enums\GradeLevel;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -56,21 +57,7 @@ class StudentsTable
             ->filters([
                 SelectFilter::make('current_grade_level')
                     ->label('Grade Level')
-                    ->options([
-                        'Kinder' => 'Kinder',
-                        'Grade 1' => 'Grade 1',
-                        'Grade 2' => 'Grade 2',
-                        'Grade 3' => 'Grade 3',
-                        'Grade 4' => 'Grade 4',
-                        'Grade 5' => 'Grade 5',
-                        'Grade 6' => 'Grade 6',
-                        'Grade 7' => 'Grade 7',
-                        'Grade 8' => 'Grade 8',
-                        'Grade 9' => 'Grade 9',
-                        'Grade 10' => 'Grade 10',
-                        'Grade 11' => 'Grade 11',
-                        'Grade 12' => 'Grade 12',
-                    ]),
+                    ->options(GradeLevel::asSelectOptions()),
             ])
             ->recordActions([
                 ViewAction::make(),

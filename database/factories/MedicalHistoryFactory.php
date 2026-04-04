@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\MedicalHistory;
 use App\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -25,7 +24,7 @@ class MedicalHistoryFactory extends Factory
 
         return [
             'student_id' => Student::factory(),
-            
+
             // Allergies
             'has_allergies' => $hasAllergies,
             'allergy_types' => $hasAllergies ? fake()->randomElements(['medicine', 'food', 'dust', 'pollen'], rand(1, 2)) : null,
@@ -38,7 +37,7 @@ class MedicalHistoryFactory extends Factory
 
             // Surgery / Hospitalization
             'has_past_surgery' => $hasPastSurgery,
-            'surgery_details' => $hasPastSurgery ? 'Appendectomy in ' . fake()->year() : null,
+            'surgery_details' => $hasPastSurgery ? 'Appendectomy in '.fake()->year() : null,
 
             // Family History
             'family_history' => $hasFamilyHistory ? fake()->randomElements(['hypertension', 'diabetes', 'cancer', 'asthma'], rand(1, 2)) : null,

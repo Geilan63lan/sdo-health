@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Students\Schemas;
 
+use App\Enums\GradeLevel;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -26,21 +27,7 @@ class StudentForm
                             ->columnSpanFull(),
                         Select::make('current_grade_level')
                             ->label('Grade Level')
-                            ->options([
-                                'Kinder' => 'Kinder',
-                                'Grade 1' => 'Grade 1',
-                                'Grade 2' => 'Grade 2',
-                                'Grade 3' => 'Grade 3',
-                                'Grade 4' => 'Grade 4',
-                                'Grade 5' => 'Grade 5',
-                                'Grade 6' => 'Grade 6',
-                                'Grade 7' => 'Grade 7',
-                                'Grade 8' => 'Grade 8',
-                                'Grade 9' => 'Grade 9',
-                                'Grade 10' => 'Grade 10',
-                                'Grade 11' => 'Grade 11',
-                                'Grade 12' => 'Grade 12',
-                            ])
+                            ->options(GradeLevel::asSelectOptions())
                             ->required(),
                         TextInput::make('lrn')
                             ->label('LRN')
@@ -77,6 +64,35 @@ class StudentForm
                             ->columnSpan(1),
                     ])
                     ->columns(2),
+
+                Section::make('Guardian Information')
+                    ->schema([
+                        TextInput::make('guardian_name')
+                            ->label('Guardian Name')
+                            ->required(),
+                        TextInput::make('guardian_contact')
+                            ->label('Guardian Contact')
+                            ->required(),
+                        Select::make('guardian_relationship')
+                            ->label('Relationship')
+                            ->options([
+                                'Father' => 'Father',
+                                'Mother' => 'Mother',
+                                'Grandparent' => 'Grandparent',
+                                'Aunt' => 'Aunt',
+                                'Uncle' => 'Uncle',
+                            ])
+                            ->required(),
+                    ])
+                    ->columns(2),
+
+                Section::make('Address')
+                    ->schema([
+                        TextInput::make('address')
+                            ->label('Address')
+                            ->required()
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 }

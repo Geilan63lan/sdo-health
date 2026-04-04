@@ -251,7 +251,7 @@ class HealthProgressTimelineRelationManager extends RelationManager
             $data['weight_kg'] = $lastExam->weight_kg;
             $data['ns_bmi_for_age'] = $lastExam->ns_bmi_for_age;
             $data['ns_height_for_age'] = $lastExam->ns_height_for_age;
-            $nextGrade = $this->getNextGradeLevel($lastExam->grade_level);
+            $nextGrade = GradeLevel::next($lastExam->grade_level);
             if ($nextGrade) {
                 $data['grade_level'] = $nextGrade;
             }
@@ -260,25 +260,5 @@ class HealthProgressTimelineRelationManager extends RelationManager
         }
 
         return $data;
-    }
-
-    private function getNextGradeLevel(?string $current): ?string
-    {
-        $sequence = [
-            'Kinder' => 'Grade 1',
-            'Grade 1' => 'Grade 2',
-            'Grade 2' => 'Grade 3',
-            'Grade 3' => 'Grade 4',
-            'Grade 4' => 'Grade 5',
-            'Grade 5' => 'Grade 6',
-            'Grade 6' => 'Grade 7',
-            'Grade 7' => 'Grade 8',
-            'Grade 8' => 'Grade 9',
-            'Grade 9' => 'Grade 10',
-            'Grade 10' => 'Grade 11',
-            'Grade 11' => 'Grade 12',
-        ];
-
-        return $sequence[$current] ?? null;
     }
 }

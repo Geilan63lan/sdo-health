@@ -16,4 +16,9 @@ class ViewStudent extends ViewRecord
             EditAction::make(),
         ];
     }
+
+    public function getView(): string
+    {
+        return 'filament.resources.student.view-student';
+    }
 }

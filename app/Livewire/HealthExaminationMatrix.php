@@ -11,11 +11,15 @@ use Livewire\Component;
 class HealthExaminationMatrix extends Component
 {
     // Public properties — persisted in Livewire snapshot between requests
-    public int     $studentId;
-    public string  $studentName        = '';
-    public ?string $studentGradeLevel  = null;
-    public bool    $showAll            = false;
-    public array   $data               = [];
+    public int $studentId;
+
+    public string $studentName = '';
+
+    public ?string $studentGradeLevel = null;
+
+    public bool $showAll = false;
+
+    public array $data = [];
 
     // Not persisted — re-fetched when needed
     protected ?Student $student = null;
@@ -26,6 +30,7 @@ class HealthExaminationMatrix extends Component
      * Injecting a model directly causes re-hydration failures.
      *
      * In your blade, pass the ID:
+     *
      *   @livewire('health-examination-matrix', ['studentId' => $record->id])
      */
     public function mount(int $studentId): void
@@ -34,7 +39,7 @@ class HealthExaminationMatrix extends Component
 
         $student = Student::findOrFail($studentId);
 
-        $this->studentName       = $student->full_name;
+        $this->studentName = $student->full_name;
         $this->studentGradeLevel = $student->current_grade_level;
 
         $this->loadData();
@@ -52,36 +57,36 @@ class HealthExaminationMatrix extends Component
             ->keyBy('grade_level');
 
         foreach (GradeLevel::ordered() as $grade) {
-            $exam               = $exams[$grade] ?? null;
+            $exam = $exams[$grade] ?? null;
             $this->data[$grade] = [
-                'id'                  => $exam?->id,
+                'id' => $exam?->id,
                 'date_of_examination' => $exam?->date_of_examination?->format('Y-m-d') ?? '',
-                'height_cm'           => $exam?->height_cm ?? '',
-                'weight_kg'           => $exam?->weight_kg ?? '',
-                'ns_bmi_for_age'      => $exam?->ns_bmi_for_age ?? '',
-                'ns_height_for_age'   => $exam?->ns_height_for_age ?? '',
-                'is_4ps_beneficiary'  => $exam?->is_4ps_beneficiary ?? false,
+                'height_cm' => $exam?->height_cm ?? '',
+                'weight_kg' => $exam?->weight_kg ?? '',
+                'ns_bmi_for_age' => $exam?->ns_bmi_for_age ?? '',
+                'ns_height_for_age' => $exam?->ns_height_for_age ?? '',
+                'is_4ps_beneficiary' => $exam?->is_4ps_beneficiary ?? false,
                 'is_sbfp_beneficiary' => $exam?->is_sbfp_beneficiary ?? false,
-                'deworming_july'      => $exam?->deworming_july ?? false,
-                'deworming_january'   => $exam?->deworming_january ?? false,
-                'iron_supplementation'=> $exam?->iron_supplementation ?? false,
-                'immunization_kind'   => $exam?->immunization_kind ?? '',
-                'menarche'            => $exam?->menarche ?? '',
-                'temperature'         => $exam?->temperature ?? '',
-                'blood_pressure'      => $exam?->blood_pressure ?? '',
-                'pulse_rate'          => $exam?->pulse_rate ?? '',
-                'respiratory_rate'    => $exam?->respiratory_rate ?? '',
-                'vision_l'            => $exam?->vision_l ?? '',
-                'vision_r'            => $exam?->vision_r ?? '',
-                'auditory_l'          => $exam?->auditory_l ?? '',
-                'auditory_r'          => $exam?->auditory_r ?? '',
-                'skin_scalp'          => $exam?->skin_scalp ?? '',
-                'eyes_ears_nose'      => $exam?->eyes_ears_nose ?? '',
-                'mouth_neck_throat'   => $exam?->mouth_neck_throat ?? '',
-                'lungs_heart'         => $exam?->lungs_heart ?? '',
-                'abdomen'             => $exam?->abdomen ?? '',
-                'deformities'         => $exam?->deformities ?? '',
-                'others_specify'      => $exam?->others_specify ?? '',
+                'deworming_july' => $exam?->deworming_july ?? false,
+                'deworming_january' => $exam?->deworming_january ?? false,
+                'iron_supplementation' => $exam?->iron_supplementation ?? false,
+                'immunization_kind' => $exam?->immunization_kind ?? '',
+                'menarche' => $exam?->menarche ?? '',
+                'temperature' => $exam?->temperature ?? '',
+                'blood_pressure' => $exam?->blood_pressure ?? '',
+                'pulse_rate' => $exam?->pulse_rate ?? '',
+                'respiratory_rate' => $exam?->respiratory_rate ?? '',
+                'vision_l' => $exam?->vision_l ?? '',
+                'vision_r' => $exam?->vision_r ?? '',
+                'auditory_l' => $exam?->auditory_l ?? '',
+                'auditory_r' => $exam?->auditory_r ?? '',
+                'skin_scalp' => $exam?->skin_scalp ?? '',
+                'eyes_ears_nose' => $exam?->eyes_ears_nose ?? '',
+                'mouth_neck_throat' => $exam?->mouth_neck_throat ?? '',
+                'lungs_heart' => $exam?->lungs_heart ?? '',
+                'abdomen' => $exam?->abdomen ?? '',
+                'deformities' => $exam?->deformities ?? '',
+                'others_specify' => $exam?->others_specify ?? '',
             ];
         }
     }
@@ -98,10 +103,10 @@ class HealthExaminationMatrix extends Component
             return;
         }
 
-        $grade     = $grades[$gradeIndex];
+        $grade = $grades[$gradeIndex];
         $gradeData = $this->data[$grade] ?? [];
 
-        $boolFields  = [
+        $boolFields = [
             'is_4ps_beneficiary', 'is_sbfp_beneficiary',
             'deworming_july', 'deworming_january', 'iron_supplementation',
         ];
@@ -138,9 +143,15 @@ class HealthExaminationMatrix extends Component
                 continue;
             }
             $value = $gradeData[$field];
-            if (in_array($field, $nullableFields)) { $value = $value === '' ? null : $value; }
-            if (in_array($field, $floatFields))    { $value = $value === null ? null : (float) $value; }
-            if (in_array($field, $boolFields))     { $value = (bool) $value; }
+            if (in_array($field, $nullableFields)) {
+                $value = $value === '' ? null : $value;
+            }
+            if (in_array($field, $floatFields)) {
+                $value = $value === null ? null : (float) $value;
+            }
+            if (in_array($field, $boolFields)) {
+                $value = (bool) $value;
+            }
             $updateData[$field] = $value;
         }
 
@@ -171,15 +182,15 @@ class HealthExaminationMatrix extends Component
     public function getLegendOptions(): array
     {
         return [
-            'ns_bmi'            => HealthLegend::options('ns_bmi'),
-            'ns_height'         => HealthLegend::options('ns_height'),
-            'screenings'        => HealthLegend::options('screenings'),
-            'skin_scalp'        => HealthLegend::options('skin_scalp'),
-            'eyes_ears_nose'    => HealthLegend::options('eyes_ears_nose'),
+            'ns_bmi' => HealthLegend::options('ns_bmi'),
+            'ns_height' => HealthLegend::options('ns_height'),
+            'screenings' => HealthLegend::options('screenings'),
+            'skin_scalp' => HealthLegend::options('skin_scalp'),
+            'eyes_ears_nose' => HealthLegend::options('eyes_ears_nose'),
             'mouth_neck_throat' => HealthLegend::options('mouth_neck_throat'),
-            'lungs_heart'       => HealthLegend::options('lungs_heart'),
-            'abdomen'           => HealthLegend::options('abdomen'),
-            'deformities'       => HealthLegend::options('deformities'),
+            'lungs_heart' => HealthLegend::options('lungs_heart'),
+            'abdomen' => HealthLegend::options('abdomen'),
+            'deformities' => HealthLegend::options('deformities'),
         ];
     }
 
@@ -187,7 +198,7 @@ class HealthExaminationMatrix extends Component
     {
         return view('livewire.health-examination-matrix', [
             'gradeLevels' => GradeLevel::ordered(),
-            'legends'     => $this->getLegendOptions(),
+            'legends' => $this->getLegendOptions(),
         ]);
     }
 }

@@ -21,22 +21,23 @@
             />
 
             <!-- Password -->
-            <div class="relative">
+            <div class="flex flex-col gap-1">
+                @if (Route::has('password.request'))
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-medium text-zinc-900 dark:text-zinc-100">{{ __('Password') }}</label>
+                        <flux:link class="text-sm" :href="route('password.request')" wire:navigate="true">
+                            {{ __('Forgot your password?') }}
+                        </flux:link>
+                    </div>
+                @endif
                 <flux:input
                     name="password"
-                    :label="__('Password')"
                     type="password"
                     required="true"
                     autocomplete="current-password"
                     :placeholder="__('Password')"
                     viewable
                 />
-
-                @if (Route::has('password.request'))
-                    <flux:link class="absolute top-0 text-sm end-0" :href="route('password.request')" wire:navigate="true">
-                        {{ __('Forgot your password?') }}
-                    </flux:link>
-                @endif
             </div>
 
             <!-- Remember Me -->

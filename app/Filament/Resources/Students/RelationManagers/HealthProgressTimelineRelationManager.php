@@ -135,25 +135,9 @@ class HealthProgressTimelineRelationManager extends RelationManager
                     ),
             ])
             ->defaultGroup('grade_level')
-            ->recordActions([
-                EditAction::make(),
-                DeleteAction::make(),
-            ])
-            ->headerActions([
-                CreateAction::make()
-                    ->label('New Health Examination')
-                    ->modalDescription(new HtmlString('<span style="font-size: 0.75rem; color: #9ca3af; font-weight: 300;">Some fields are pre-filled from the previous examination.</span>'))
-                    ->fillForm(fn (RelationManager $livewire): array => $this->getAutoFillData($livewire->getOwnerRecord(), $lastExam))
-                    ->mutateFormDataUsing(fn (array $data): array => [
-                        ...$data,
-                        'examined_by' => auth()->id(),
-                    ]),
-            ])
-            ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->recordActions([])
+            ->headerActions([])
+            ->bulkActions([]);
     }
 
     private function buildHistoryMaps(): void

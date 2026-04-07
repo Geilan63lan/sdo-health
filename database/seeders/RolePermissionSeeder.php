@@ -16,6 +16,7 @@ class RolePermissionSeeder extends Seeder
     {
         // Create permissions
         $permissions = [
+            // Admin permissions
             'view_admin_panel',
             // Manage permissions (full CRUD)
             'manage_schools',
@@ -26,6 +27,11 @@ class RolePermissionSeeder extends Seeder
             // View permissions (view only, no edit/add/delete)
             'view_schools',
             'view_students',
+            'manage_permissions',
+            
+            // View-only permissions
+            'view_students',
+            'view_schools',
             'view_health_records',
             'view_vaccinations',
             'view_absences',
@@ -40,11 +46,23 @@ class RolePermissionSeeder extends Seeder
         $sdoAdminRole = Role::firstOrCreate(['name' => 'sdo_admin']);
         $healthCoordinatorRole = Role::firstOrCreate(['name' => 'health_coordinator']);
         $principalRole = Role::firstOrCreate(['name' => 'principal']);
+            Permission::firstOrCreate(
+                ['name' => $permission, 'guard_name' => 'web'],
+                ['guard_name' => 'web']
+            );
+        }
+
+        // Create roles
+        $sdoAdminRole = Role::firstOrCreate(['name' => 'sdo_admin', 'guard_name' => 'web']);
+        $healthCoordinatorRole = Role::firstOrCreate(['name' => 'health_coordinator', 'guard_name' => 'web']);
+        $principalRole = Role::firstOrCreate(['name' => 'principal', 'guard_name' => 'web']);
 
         // Assign permissions to roles
-        $sdoAdminRole->givePermissionTo($permissions); // SDO Admin has all permissions
+        // SDO Admin has all permissions
+        $sdoAdminRole->syncPermissions($permissions);
 
-        $healthCoordinatorRole->givePermissionTo([
+        // Health Coordinator - can manage health records, vaccinations, absences, and health programs
+        $healthCoordinatorRole->syncPermissions([
             'view_admin_panel',
             'manage_students',
             'manage_health_records',
@@ -53,7 +71,8 @@ class RolePermissionSeeder extends Seeder
             'view_absences',
         ]);
 
-        $principalRole->givePermissionTo([
+        // Principal - can view students and health records
+        $principalRole->syncPermissions([
             'view_admin_panel',
             'view_schools',
             'view_students',
@@ -61,19 +80,18 @@ class RolePermissionSeeder extends Seeder
             'view_vaccinations',
             'view_absences',
             'view_health_programs',
+            'view_students',
+            'view_health_records',
         ]);
 
         // Assign roles to existing users based on their current role column
-        User::where('role', 'sdo_admin')->get()->each(function ($user) use ($sdoAdminRole) {
-            $user->assignRole($sdoAdminRole);
-        });
+        $sdo_admins = User::where('role', 'sdo_admin')->get();
+        $sdo_admins->each(fn(User $user) => $user->assignRole($sdoAdminRole));
 
-        User::where('role', 'health_coordinator')->get()->each(function ($user) use ($healthCoordinatorRole) {
-            $user->assignRole($healthCoordinatorRole);
-        });
+        $health_coordinators = User::where('role', 'health_coordinator')->get();
+        $health_coordinators->each(fn(User $user) => $user->assignRole($healthCoordinatorRole));
 
-        User::where('role', 'principal')->get()->each(function ($user) use ($principalRole) {
-            $user->assignRole($principalRole);
-        });
+        $principals = User::where('role', 'principal')->get();
+        $principals->each(fn(User $user) => $user->assignRole($principalRole));
     }
 }

@@ -2,21 +2,22 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Pages\Dashboard;
-use App\Filament\Resources\AbsenceResource;
-use App\Filament\Resources\HealthProgramResource;
-use App\Filament\Resources\SchoolClinicResource;
-use App\Filament\Resources\SchoolResource;
-use App\Filament\Resources\StudentResource;
-use App\Filament\Resources\VaccinationResource;
-use App\Http\Middleware\RedirectIfUnapproved;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use App\Filament\Resources\SchoolResource;
+use App\Filament\Resources\StudentResource;
+use App\Filament\Resources\HealthRecordResource;
+use App\Filament\Resources\VaccinationResource;
+use App\Filament\Resources\SchoolClinicResource;
+use App\Filament\Resources\HealthProgramResource;
+use App\Filament\Resources\AbsenceResource;
+use App\Filament\Resources\RolePermissionResource;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -33,11 +34,6 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->homeUrl('/')
-            ->favicon('https://sdolegazpicity.com/wp-content/uploads/2025/12/cropped-LOGO-sdo-leg-1-1.png')
-            ->brandName('SDO Legazpi Health System')
-            ->brandLogo('https://sdolegazpicity.com/wp-content/uploads/2025/12/cropped-LOGO-sdo-leg-1-1.png')
-            ->brandLogoHeight('3.0rem')
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -54,10 +50,11 @@ class AdminPanelProvider extends PanelProvider
                 SchoolClinicResource::class,
                 HealthProgramResource::class,
                 AbsenceResource::class,
+                RolePermissionResource::class,
             ])
             ->widgets([
-                // AccountWidget::class,
-                // FilamentInfoWidget::class,
+                //AccountWidget::class,
+                //FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -69,7 +66,6 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-                RedirectIfUnapproved::class,
             ])
             ->authMiddleware([
                 Authenticate::class,

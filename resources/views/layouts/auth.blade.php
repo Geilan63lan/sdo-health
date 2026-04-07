@@ -7,8 +7,14 @@
 
     <title>{{ $title ?? 'Login' }} - SDO Health</title>
 
-    <link rel="stylesheet" href="{{ mix('css/app.css') }}">
-    <link rel="stylesheet" href="{{ mix('css/flux.css') }}">
+    <!-- CDN Scripts & Styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flux@2.4.0/dist/flux.min.css">
+    <style>
+        .card {
+            @apply bg-white rounded-lg shadow-lg p-6;
+        }
+    </style>
     @livewireStyles
 </head>
 <body class="font-sans antialiased bg-gradient-to-br from-blue-50 to-blue-100">
@@ -17,7 +23,7 @@
             <!-- Logo -->
             <div class="text-center mb-8">
                 <h1 class="text-4xl font-bold text-zinc-900">SDO Health</h1>
-                <p class="text-zinc-600 mt-2">Legazpi Health System</p>
+                <p class="text-zinc-600 mt-2">SDO Legazpi Health System</p>
             </div>
 
             <!-- Auth Card -->
@@ -32,8 +38,6 @@
         </div>
     </div>
 
-    <script src="{{ mix('js/app.js') }}" defer></script>
     @livewireScripts
-    @fluxScripts
 </body>
 </html>

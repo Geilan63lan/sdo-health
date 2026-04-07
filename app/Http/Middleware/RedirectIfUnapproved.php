@@ -21,9 +21,11 @@ class RedirectIfUnapproved
         // SDO Admins don't need approval.
         if ($user && ! $user->is_approved && ! $user->hasRole('sdo_admin')) {
             // Check if user is already on the pending approval page to avoid infinite loop.
-            if (! $request->routeIs('pending-approval')) {
-                return redirect()->route('pending-approval');
+            if ($request->routeIs('pending-approval') || $request->is('pending-approval*')) {
+                return $next($request);
             }
+
+            return redirect()->route('pending-approval');
         }
 
         return $next($request);

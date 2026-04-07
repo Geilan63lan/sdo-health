@@ -8,6 +8,7 @@ use Filament\Auth\Http\Responses\Contracts\LogoutResponse as FilamentLogoutRespo
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View;
 use Illuminate\Validation\Rules\Password;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,6 +27,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+
+        View::addNamespace('pages', resource_path('views/pages'));
+        View::addNamespace('layouts', resource_path('views/layouts'));
     }
 
     /**

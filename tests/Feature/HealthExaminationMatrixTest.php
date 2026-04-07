@@ -84,7 +84,7 @@ test('column visibility filtered by student current grade level', function () {
     $student = Student::factory()->create(['current_grade_level' => 'Grade 1']);
 
     $component = new HealthExaminationMatrix;
-    $component->mount($student);
+    $component->mount($student->id);
 
     expect($component->isVisible('Kinder'))->toBeTrue();
     expect($component->isVisible('Grade 1'))->toBeTrue();
@@ -96,7 +96,7 @@ test('all columns visible when student has no current grade level', function () 
     $student = Student::factory()->create(['current_grade_level' => null]);
 
     $component = new HealthExaminationMatrix;
-    $component->mount($student);
+    $component->mount($student->id);
 
     foreach (GradeLevel::ordered() as $grade) {
         expect($component->isVisible($grade))->toBeTrue();
@@ -107,7 +107,7 @@ test('toggle show all reveals all columns', function () {
     $student = Student::factory()->create(['current_grade_level' => 'Grade 1']);
 
     $component = new HealthExaminationMatrix;
-    $component->mount($student);
+    $component->mount($student->id);
 
     expect($component->isVisible('Grade 12'))->toBeFalse();
 
@@ -134,7 +134,7 @@ test('loadData populates existing exam data', function () {
     ]);
 
     $component = new HealthExaminationMatrix;
-    $component->mount($student);
+    $component->mount($student->id);
 
     expect($component->data['Kinder']['height_cm'])->toBe('110.50')
         ->and($component->data['Kinder']['weight_kg'])->toBe('20.00')
@@ -147,7 +147,7 @@ test('save creates new examination record for empty grade', function () {
     $this->actingAs($user);
 
     $component = new HealthExaminationMatrix;
-    $component->mount($student);
+    $component->mount($student->id);
 
     $component->data['Grade 2']['date_of_examination'] = '2025-06-15';
     $component->data['Grade 2']['height_cm'] = '115.5';
@@ -155,7 +155,8 @@ test('save creates new examination record for empty grade', function () {
     $component->data['Grade 2']['ns_bmi_for_age'] = 'a';
     $component->data['Grade 2']['ns_height_for_age'] = 'f';
 
-    $component->save('Grade 2');
+    // Grade 2 is at index 2 (Kinder=0, Grade 1=1, Grade 2=2)
+    $component->performSave(2);
 
     $this->assertDatabaseHas('health_examinations', [
         'student_id' => $student->id,
@@ -178,11 +179,13 @@ test('save updates existing examination record', function () {
     ]);
 
     $component = new HealthExaminationMatrix;
-    $component->mount($student);
+    $component->mount($student->id);
 
     $component->data['Grade 3']['height_cm'] = '125.0';
     $component->data['Grade 3']['weight_kg'] = '27.5';
-    $component->save('Grade 3');
+    
+    // Grade 3 is at index 3
+    $component->performSave(3);
 
     $this->assertDatabaseHas('health_examinations', [
         'id' => $exam->id,
@@ -199,13 +202,15 @@ test('save handles boolean intervention fields', function () {
     $this->actingAs($user);
 
     $component = new HealthExaminationMatrix;
-    $component->mount($student);
+    $component->mount($student->id);
 
     $component->data['Kinder']['is_4ps_beneficiary'] = true;
     $component->data['Kinder']['deworming_july'] = true;
     $component->data['Kinder']['deworming_january'] = false;
     $component->data['Kinder']['iron_supplementation'] = true;
-    $component->save('Kinder');
+    
+    // Kinder is index 0
+    $component->performSave(0);
 
     $this->assertDatabaseHas('health_examinations', [
         'student_id' => $student->id,
@@ -221,7 +226,7 @@ test('render returns correct view with data', function () {
     $student = Student::factory()->create(['current_grade_level' => 'Kinder']);
 
     $component = new HealthExaminationMatrix;
-    $component->mount($student);
+    $component->mount($student->id);
 
     $view = $component->render();
 

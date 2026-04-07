@@ -12,7 +12,7 @@ use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use App\Filament\Resources\SchoolResource;
 use App\Filament\Resources\StudentResource;
-use App\Filament\Resources\HealthRecordResource;
+use App\Filament\Resources\HealthExaminationResource;
 use App\Filament\Resources\VaccinationResource;
 use App\Filament\Resources\SchoolClinicResource;
 use App\Filament\Resources\HealthProgramResource;
@@ -46,6 +46,7 @@ class AdminPanelProvider extends PanelProvider
             ->resources([
                 SchoolResource::class,
                 StudentResource::class,
+                HealthExaminationResource::class,
                 VaccinationResource::class,
                 SchoolClinicResource::class,
                 HealthProgramResource::class,

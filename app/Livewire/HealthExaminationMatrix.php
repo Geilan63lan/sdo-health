@@ -61,8 +61,8 @@ class HealthExaminationMatrix extends Component
             $this->data[$grade] = [
                 'id' => $exam?->id,
                 'date_of_examination' => $exam?->date_of_examination?->format('Y-m-d') ?? '',
-                'height_cm' => $exam?->height_cm ?? '',
-                'weight_kg' => $exam?->weight_kg ?? '',
+                'height_cm' => $exam?->height_cm !== null ? number_format($exam->height_cm, 2, '.', '') : '',
+                'weight_kg' => $exam?->weight_kg !== null ? number_format($exam->weight_kg, 2, '.', '') : '',
                 'ns_bmi_for_age' => $exam?->ns_bmi_for_age ?? '',
                 'ns_height_for_age' => $exam?->ns_height_for_age ?? '',
                 'is_4ps_beneficiary' => $exam?->is_4ps_beneficiary ?? false,

@@ -31,6 +31,9 @@ class HealthExaminationMatrix extends Component
     // Validation confirmation
     public ?string $pendingValidationGrade = null;
 
+    // Persist the open dropdown ID across re-renders
+    public ?string $openMultiSelect = null;
+
     // Permission helpers
     protected ?User $currentUser = null;
 
@@ -242,12 +245,12 @@ class HealthExaminationMatrix extends Component
                 'vision_r' => $exam?->vision_r ?? '',
                 'auditory_l' => $exam?->auditory_l ?? '',
                 'auditory_r' => $exam?->auditory_r ?? '',
-                'skin_scalp' => $exam?->skin_scalp ?? '',
-                'eyes_ears_nose' => $exam?->eyes_ears_nose ?? '',
-                'mouth_neck_throat' => $exam?->mouth_neck_throat ?? '',
-                'lungs_heart' => $exam?->lungs_heart ?? '',
-                'abdomen' => $exam?->abdomen ?? '',
-                'deformities' => $exam?->deformities ?? '',
+                'skin_scalp' => $exam?->getSkinScalpArrayAttribute() ?? [],
+                'eyes_ears_nose' => $exam?->getEyesEarsNoseArrayAttribute() ?? [],
+                'mouth_neck_throat' => $exam?->getMouthNeckThroatArrayAttribute() ?? [],
+                'lungs_heart' => $exam?->getLungsHeartArrayAttribute() ?? [],
+                'abdomen' => $exam?->getAbdomenArrayAttribute() ?? [],
+                'deformities' => $exam?->getDeformitiesArrayAttribute() ?? [],
                 'others_specify' => $exam?->others_specify ?? '',
                 'validated' => $exam?->validated ?? false,
                 'validated_at' => $exam?->validated_at instanceof \Carbon\Carbon ? $exam->validated_at->format('Y-m-d H:i:s') : null,
@@ -313,11 +316,18 @@ class HealthExaminationMatrix extends Component
         );
 
         $updateData = [];
+        $multiSelectFields = ['skin_scalp', 'eyes_ears_nose', 'mouth_neck_throat', 'lungs_heart', 'abdomen', 'deformities'];
+
         foreach ($fillable as $field) {
             if (! array_key_exists($field, $gradeData)) {
                 continue;
             }
             $value = $gradeData[$field];
+
+            if (in_array($field, $multiSelectFields) && is_array($value)) {
+                $value = implode(',', array_filter($value));
+            }
+
             if (in_array($field, $nullableFields)) {
                 $value = $value === '' ? null : $value;
             }
@@ -373,9 +383,15 @@ class HealthExaminationMatrix extends Component
 
     public function render()
     {
+        $gradeLevels = GradeLevel::ordered();
+        $hiddenCount = count(array_filter($gradeLevels, fn($g) => !$this->isVisible($g)));
+        $currentIdx  = $this->studentGradeLevel ? array_search($this->studentGradeLevel, $gradeLevels) : 0;
+
         return view('livewire.health-examination-matrix', [
-            'gradeLevels' => GradeLevel::ordered(),
-            'legends' => $this->getLegendOptions(),
+            'gradeLevels' => $gradeLevels,
+            'legends'     => $this->getLegendOptions(),
+            'hiddenCount' => $hiddenCount,
+            'currentIdx'  => $currentIdx,
         ]);
     }
 }

@@ -1,9 +1,6 @@
 {{-- resources/views/livewire/health-examination-matrix.blade.php --}}
 
 @php
-    $hiddenCount = count(array_filter($gradeLevels, fn($g) => !$this->isVisible($g)));
-    $currentIdx  = $studentGradeLevel ? array_search($studentGradeLevel, $gradeLevels) : 0;
-
     $cellBg = fn(string $grade) => match(true) {
         $grade === $studentGradeLevel => '#eff6ff',
         array_search($grade, $gradeLevels) < $currentIdx => '#f9fafb',
@@ -15,7 +12,8 @@
      SCOPED STYLES — loaded inline, always works in Filament
 ═══════════════════════════════════════════════════════ --}}
 <div
-    x-data="{ toastShow: false, toastGrade: '' }"
+    wire:ignore.self
+    x-data="{ toastShow: false, toastGrade: '', openMultiSelect: $wire.entangle('openMultiSelect') }"
     x-on:saved.window="toastShow = true; toastGrade = $event.detail.grade; setTimeout(() => toastShow = false, 2500)"
 >
 <style>
@@ -62,7 +60,7 @@
     position: sticky; left: 0; z-index: 2;
     min-width: 200px; padding: 7px 14px;
     background: #fff; border-bottom: 1px solid #f1f5f9;
-    border-right: 1px solid #e2e8f0;
+    border-right: 1px solid #cbd5e1;
     font-size: 12px; font-weight: 500; color: #374151;
     white-space: nowrap;
 }
@@ -78,7 +76,7 @@
     min-width: 100px; padding: 8px 6px 6px;
     text-align: center; font-size: 11.5px; font-weight: 600;
     color: #94a3b8; background: #f8fafc;
-    border-bottom: 2px solid #e2e8f0; border-right: 1px solid #f1f5f9;
+    border-bottom: 2px solid #e2e8f0; border-right: 1px solid #cbd5e1;
     white-space: nowrap; line-height: 1.3;
 }
 .hem-tbl .g-th { 
@@ -134,16 +132,17 @@
 
 /* Data cells */
 .hem-tbl .d-cell {
-    border-bottom: 1px solid #f1f5f9; border-right: 1px solid #f1f5f9;
+    border-bottom: 1px solid #f1f5f9; border-right: 1px solid #cbd5e1;
     padding: 4px 4px; text-align: center; vertical-align: middle;
+    overflow: visible !important;
 }
-.hem-tbl tr:hover .d-cell { filter: brightness(.97); }
+.hem-tbl tr:hover .d-cell { background: rgba(0,0,0,0.02); }
 .hem-tbl .d-cell.locked  { background: #f8fafc !important; min-width: 72px; }
 
 /* Split cell (Jul/Jan, L/R) */
 .hem-split  { display: flex; }
 .hem-half   { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px 2px; gap: 2px; }
-.hem-half + .hem-half { border-left: 1px solid #f1f5f9; }
+.hem-half + .hem-half { border-left: 1px solid #cbd5e1; }
 .hem-sub-lbl { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
 .hem-sub-lbl.amber { color: #f59e0b; }
 .hem-sub-lbl.teal  { color: #0d9488; }
@@ -172,6 +171,40 @@
 
 /* Checkboxes */
 .hem-cb { width: 15px; height: 15px; accent-color: #1d4ed8; cursor: pointer; display: block; margin: 0 auto; }
+
+/* Multi-select dropdown */
+.hem-multi-wrapper { position: relative; display: block; }
+.hem-multi-trigger {
+    display: flex; flex-wrap: wrap; gap: 2px; align-items: center;
+    min-height: 26px; padding: 2px 6px; cursor: pointer;
+    border: 1px solid #cbd5e1; border-radius: 4px; background: white;
+    font-size: 10px; width: 100%;
+}
+.hem-multi-trigger:hover { border-color: #94a3b8; }
+.hem-multi-chip {
+    display: inline-flex; align-items: center; gap: 2px;
+    padding: 1px 4px; background: #e0e7ff; border-radius: 3px;
+    color: #3730a3; font-size: 9px; font-weight: 600;
+}
+.hem-multi-chip button {
+    background: none; border: none; cursor: pointer; padding: 0;
+    color: #3730a3; font-size: 10px; line-height: 1;
+}
+.hem-multi-chip button:hover { color: #1d4ed8; }
+.hem-multi-dropdown {
+    position: fixed; z-index: 11000;
+    min-width: 220px; max-height: 250px; overflow-y: auto;
+    background: white; border: 1px solid #94a3b8;
+    border-radius: 6px; box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    margin-top: 2px;
+    padding: 4px 0;
+}
+.hem-multi-option {
+    display: flex; align-items: center; gap: 8px; padding: 8px 12px;
+    cursor: pointer; font-size: 12px; color: #374151; width: 100%;
+}
+.hem-multi-option:hover { background: #eff6ff; }
+.hem-multi-option input { width: 16px; height: 16px; accent-color: #1d4ed8; }
 
 /* Save row */
 .hem-save-row td { background: #f8fafc; padding: 6px 4px; }
@@ -258,7 +291,7 @@
 </div>
 
 {{-- ═══ MATRIX ═══ --}}
-<div class="hem-scroll">
+<div class="hem-scroll" @scroll="$dispatch('scroll-matrix')">
 <table class="hem-tbl">
 <thead>
     <tr>
@@ -274,7 +307,7 @@
                     style="background:{{ $cellBg($grade) }}"
                     wire:click="openModal('{{ $grade }}')">
                     {{ $grade }}
-                    @if ($isCurr) <small>● now</small> @elseif ($isPast) <small>✓</small> @endif
+                    @if ($isCurr) <small>�-� now</small> @elseif ($isPast) <small>✓</small> @endif
                     @if (($data[$grade]['validated'] ?? false) && !($data[$grade]['reverted_at'] ?? null))
                         <span style="display:block;font-size:8px;color:#92400e;">✓VALIDATED</span>
                     @endif
@@ -498,10 +531,90 @@
 <tr>
     <td class="f-col">{{ $f['label'] }}</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
-        <td class="d-cell" style="background:{{ $cellBg($grade) }}">
-            <select wire:model.defer="data.{{ $grade }}.{{ $f['key'] }}" class="hem-select">
-                @foreach ($legends[$f['legend']] as $v => $l)<option value="{{ $v }}">{{ $l }}</option>@endforeach
-            </select>
+        <td class="d-cell" style="background:{{ $cellBg($grade) }}; padding: 2px;">
+            @php($fieldKey = $f['key'])
+            @php($currentValues = $data[$grade][$fieldKey] ?? [])
+            <div class="hem-multi-wrapper" 
+                 wire:key="multi-{{ $grade }}-{{ $fieldKey }}"
+                 x-data="{ 
+                     id: '{{ $grade }}-{{ $fieldKey }}',
+                     opts: @js(array_keys($legends[$f['legend']])),
+                     labels: @js($legends[$f['legend']]),
+                     vals: @js($currentValues),
+                     get isOpen() { return openMultiSelect === this.id },
+                     toggle() { 
+                         if (this.isOpen) {
+                             openMultiSelect = null;
+                         } else {
+                             openMultiSelect = this.id;
+                             this.reposition();
+                         }
+                     },
+                     reposition() {
+                         this.$nextTick(() => {
+                            const el = this.$el.querySelector('.hem-multi-dropdown');
+                            const trigger = this.$el.querySelector('.hem-multi-trigger');
+                            if(!el || !trigger) return;
+                            const rect = trigger.getBoundingClientRect();
+                            el.style.top = (rect.bottom + 4) + 'px';
+                            el.style.left = rect.left + 'px';
+                         });
+                     },
+                     isSelected(v) { return this.vals.includes(v) },
+                     toggleOpt(v) {
+                         if(this.vals.includes(v)) {
+                             this.vals = this.vals.filter(x => x !== v);
+                         } else {
+                             this.vals.push(v);
+                         }
+                         $wire.set('data.{{ $grade }}.{{ $fieldKey }}', this.vals);
+                     },
+                     resetAll() {
+                         this.vals = [];
+                         $wire.set('data.{{ $grade }}.{{ $fieldKey }}', []);
+                     }
+                 }" 
+                 x-init="$watch('openMultiSelect', value => { if(value === id) reposition() })"
+                 @click.outside="if(isOpen) openMultiSelect = null"
+                 x-on:scroll.window.passive="if(isOpen) reposition()"
+                 @scroll-matrix.window="if(isOpen) reposition()">
+                <div class="hem-multi-trigger" @click.stop="toggle()">
+                    @forelse($currentValues as $val)
+                        <span class="hem-multi-chip">{{ $legends[$f['legend']][$val] ?? $val }}</span>
+                    @empty
+                        <span style="color:#94a3b8;font-size:9px;">Select...</span>
+                    @endforelse
+                </div>
+                <div x-show="isOpen" wire:ignore x-transition x-cloak class="hem-multi-dropdown" style="display:none;position:fixed;z-index:11000;min-width:200px;max-height:250px;overflow-y:auto;background:white;border:1px solid #94a3b8;border-radius:6px;box-shadow:0 8px 20px rgba(0,0,0,0.2);padding:4px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 8px;border-bottom:1px solid #f1f5f9;margin-bottom:4px;position:sticky;top:0;background:white;z-index:10;">
+                        <span style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;">Options</span>
+                        <button @click.stop="resetAll()" style="font-size:10px;color:#ef4444;background:none;border:none;cursor:pointer;font-weight:700;padding:2px 4px;border-radius:3px;" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='none'">Reset</button>
+                    </div>
+                    
+                    <div style="padding-bottom:40px;"> {{-- extra padding for sticky footer --}}
+                        @foreach($legends[$f['key']] as $optVal => $optLabel)
+                            <label style="display:flex;align-items:center;gap:8px;padding:6px 8px;cursor:pointer;font-size:11px;" 
+                                   @mouseenter="$el.style.background='#eff6ff'" 
+                                   @mouseleave="$el.style.background='white'">
+                                <input type="checkbox" 
+                                       {{ in_array($optVal, $currentValues) ? 'checked' : '' }} 
+                                       @click.stop="toggleOpt('{{ $optVal }}')"
+                                       style="width:14px;height:14px;accent-color:#1d4ed8;">
+                                <span>{{ $optLabel }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+
+                    <div style="position:sticky;bottom:0;background:white;padding:6px;border-top:1px solid #f1f5f9;display:flex;justify-content:center;">
+                        <button @click.stop="openMultiSelect = null" 
+                                style="width:100%;background:#1d4ed8;color:white;border:none;border-radius:4px;padding:6px;font-size:11px;font-weight:700;cursor:pointer;"
+                                onmouseover="this.style.background='#1e40af'"
+                                onmouseout="this.style.background='#1d4ed8'">
+                            Done
+                        </button>
+                    </div>
+                </div>
+            </div>
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -522,16 +635,6 @@
 </tr>
 
 <tr>
-    <td class="f-col">Designation</td>
-    @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
-        <td class="d-cell" style="background:{{ $cellBg($grade) }}">
-            <input type="text" wire:model.defer="data.{{ $grade }}.designation" placeholder="—" class="hem-input" style="font-size:10px;" />
-        </td>
-    @endif @endforeach
-    @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
-</tr>
-
-<tr>
     <td class="f-col">Examined By</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
@@ -541,11 +644,20 @@
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
 </tr>
 
+<tr>
+    <td class="f-col">Designation</td>
+    @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
+        <td class="d-cell" style="background:{{ $cellBg($grade) }}">
+            <input type="text" wire:model.defer="data.{{ $grade }}.designation" placeholder="—" class="hem-input" style="font-size:10px;" />
+        </td>
+    @endif @endforeach
+    @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
+</tr>
+
 {{-- ══ SAVE ROW ══ --}}
 <tr class="hem-save-row">
     <td class="f-col">Action</td>
     @foreach ($gradeLevels as $grade)
-        @php $gradeIndex = $loop->index; @endphp
         @if ($this->isVisible($grade))
         <td style="padding:4px 4px; background:#f8fafc; border-right:1px solid #f1f5f9;">
             <div style="display:flex;flex-direction:column;gap:4px;">
@@ -556,37 +668,29 @@
                 </div>
                 @else
                 <button
-                    wire:click="performSave({{ $gradeIndex }})"
+                    wire:click="performSave({{ $loop->index }})"
                     wire:loading.attr="disabled"
-                    wire:target="performSave({{ $gradeIndex }})"
+                    wire:target="performSave({{ $loop->index }})"
                     class="hem-save-btn">
-                    <span wire:loading.remove wire:target="performSave({{ $gradeIndex }})">Save</span>
-                    <span wire:loading wire:target="performSave({{ $gradeIndex }})">Saving…</span>
+                    <span wire:loading.remove wire:target="performSave({{ $loop->index }})">Save</span>
+                    <span wire:loading wire:target="performSave({{ $loop->index }})">Saving...</span>
                 </button>
                 @endif
+
                 @if ($this->isAdmin())
                     @if (($data[$grade]['validated'] ?? false) && !($data[$grade]['reverted_at'] ?? null))
-                    <button
-                        wire:click="setGradeForInvalidate('{{ $grade }}')"
-                        class="hem-validate-btn"
-                        style="background:#fef3c7;border-color:#fcd34d;color:#92400e;">
+                    <button wire:click="setGradeForInvalidate('{{ $grade }}')" class="hem-validate-btn" style="background:#fef3c7;border-color:#fcd34d;color:#92400e;">
                         Invalidate
                     </button>
                     @elseif (!($data[$grade]['validated'] ?? false))
-                    <button
-                        wire:click="setGradeForValidate('{{ $grade }}')"
-                        wire:loading.attr="disabled"
-                        wire:target="setGradeForValidate('{{ $grade }}')"
-                        class="hem-validate-btn">
+                    <button wire:click="setGradeForValidate('{{ $grade }}')" wire:loading.attr="disabled" wire:target="setGradeForValidate('{{ $grade }}')" class="hem-validate-btn">
                         <span wire:loading.remove wire:target="setGradeForValidate('{{ $grade }}')">Validate</span>
-                        <span wire:loading wire:target="setGradeForValidate('{{ $grade }}')">Validating…</span>
+                        <span wire:loading wire:target="setGradeForValidate('{{ $grade }}')">Validating...</span>
                     </button>
                     @endif
                 @else
                     @if (!($data[$grade]['validated'] ?? false))
-                    <button
-                        wire:click="setGradeForValidate('{{ $grade }}')"
-                        class="hem-validate-btn">
+                    <button wire:click="setGradeForValidate('{{ $grade }}')" class="hem-validate-btn">
                         Validate
                     </button>
                     @endif
@@ -597,7 +701,6 @@
     @endforeach
     @if (!$showAll && $hiddenCount > 0)<td style="background:#f8fafc;"></td>@endif
 </tr>
-
 
 
 </tbody>

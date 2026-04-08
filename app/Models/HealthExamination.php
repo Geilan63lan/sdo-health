@@ -146,4 +146,88 @@ class HealthExamination extends Model
         $this->reverted_by = $user?->id;
         $this->save();
     }
+
+    protected $multiSelectFields = [
+        'skin_scalp',
+        'eyes_ears_nose',
+        'mouth_neck_throat',
+        'lungs_heart',
+        'abdomen',
+        'deformities',
+    ];
+
+    public function getMultiSelectAttribute(string $field): array
+    {
+        $value = $this->attributes[$field] ?? '';
+        if (empty($value)) {
+            return [];
+        }
+
+        return array_filter(explode(',', $value));
+    }
+
+    public function setMultiSelectAttribute(string $field, array $value): void
+    {
+        $this->attributes[$field] = implode(',', array_filter($value));
+    }
+
+    public function getSkinScalpArrayAttribute(): array
+    {
+        return $this->getMultiSelectAttribute('skin_scalp');
+    }
+
+    public function setSkinScalpArrayAttribute(array $value): void
+    {
+        $this->setMultiSelectAttribute('skin_scalp', $value);
+    }
+
+    public function getEyesEarsNoseArrayAttribute(): array
+    {
+        return $this->getMultiSelectAttribute('eyes_ears_nose');
+    }
+
+    public function setEyesEarsNoseArrayAttribute(array $value): void
+    {
+        $this->setMultiSelectAttribute('eyes_ears_nose', $value);
+    }
+
+    public function getMouthNeckThroatArrayAttribute(): array
+    {
+        return $this->getMultiSelectAttribute('mouth_neck_throat');
+    }
+
+    public function setMouthNeckThroatArrayAttribute(array $value): void
+    {
+        $this->setMultiSelectAttribute('mouth_neck_throat', $value);
+    }
+
+    public function getLungsHeartArrayAttribute(): array
+    {
+        return $this->getMultiSelectAttribute('lungs_heart');
+    }
+
+    public function setLungsHeartArrayAttribute(array $value): void
+    {
+        $this->setMultiSelectAttribute('lungs_heart', $value);
+    }
+
+    public function getAbdomenArrayAttribute(): array
+    {
+        return $this->getMultiSelectAttribute('abdomen');
+    }
+
+    public function setAbdomenArrayAttribute(array $value): void
+    {
+        $this->setMultiSelectAttribute('abdomen', $value);
+    }
+
+    public function getDeformitiesArrayAttribute(): array
+    {
+        return $this->getMultiSelectAttribute('deformities');
+    }
+
+    public function setDeformitiesArrayAttribute(array $value): void
+    {
+        $this->setMultiSelectAttribute('deformities', $value);
+    }
 }

@@ -33,14 +33,16 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->registration() // Enable registration so users can create accounts
             ->homeUrl('/')
-            ->favicon('https://sdolegazpicity.com/wp-content/uploads/2025/12/cropped-LOGO-sdo-leg-1-1.png')
-            ->brandName('SDO Legazpi Health System')
-            ->brandLogo('https://sdolegazpicity.com/wp-content/uploads/2025/12/cropped-LOGO-sdo-leg-1-1.png')
-            ->brandLogoHeight('3.0rem')
+            ->favicon('/images/sdo-logo.png')
+            ->brandName('SDO Health')
+            ->brandLogo('/images/sdo-logo.png')
+            ->brandLogoHeight('3.5rem')
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Blue,
             ])
+            ->darkMode(false)
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([

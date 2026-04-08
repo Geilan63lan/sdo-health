@@ -1,0 +1,39 @@
+/* Filament Login Page Custom Styles */
+:root {
+    --color-primary: #2563eb;
+}
+
+/* Background for login page */
+.fi-login-page {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #1e3a8a 100%) !important;
+    min-height: 100vh;
+    overflow-y: auto !important;
+}
+
+/* Login container */
+.fi-login-page .fi-login {
+    min-height: 100vh;
+    padding: 2rem 0;
+    overflow-y: auto !important;
+}
+
+/* Card glass effect */
+.fi-login-page .fi-card,
+.fi-login-page .fi-form-pack {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Sidebar override for full-width */
+.filament-sidebar {
+    margin-left: 0 !important;
+}
+
+.filament-main-content {
+    margin-left: 0 !important;
+    max-width: 100% !important;
+}

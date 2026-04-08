@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Filament Login Page Custom Styles */
+.fi-login-page {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #1e3a8a 100%) !important;
+    min-height: 100vh;
+}
+
+.fi-login-page .fi-login {
+    min-height: 100vh;
+}
+
+.fi-login-page .fi-card {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Sidebar override for better spacing */
+.filament-sidebar {
+    margin-left: 0 !important;
+}
+
+.filament-main-content {
+    margin-left: 0 !important;
+    max-width: 100% !important;
+}

@@ -183,7 +183,7 @@ test('save updates existing examination record', function () {
 
     $component->data['Grade 3']['height_cm'] = '125.0';
     $component->data['Grade 3']['weight_kg'] = '27.5';
-    
+
     // Grade 3 is at index 3
     $component->performSave(3);
 
@@ -208,7 +208,7 @@ test('save handles boolean intervention fields', function () {
     $component->data['Kinder']['deworming_july'] = true;
     $component->data['Kinder']['deworming_january'] = false;
     $component->data['Kinder']['iron_supplementation'] = true;
-    
+
     // Kinder is index 0
     $component->performSave(0);
 

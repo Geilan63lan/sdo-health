@@ -2,14 +2,14 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\Absence;
+use App\Models\HealthProgram;
 use App\Models\School;
-use App\Models\Student;
 // TODO: HealthRecord was replaced by HealthExamination
 // use App\Models\HealthRecord;
-use App\Models\HealthProgram;
+use App\Models\Student;
+use App\Models\User;
 use App\Models\Vaccination;
-use App\Models\Absence;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -43,8 +43,8 @@ class DatabaseSeeder extends Seeder
         foreach ($schools as $school) {
             // Create Principal for the school
             $principal = User::factory()->create([
-                'name' => "Principal " . fake()->randomElement($filipinoFirstNames) . " " . fake()->randomElement($filipinoLastNames),
-                'email' => "principal." . $school->id . "@example.com",
+                'name' => 'Principal '.fake()->randomElement($filipinoFirstNames).' '.fake()->randomElement($filipinoLastNames),
+                'email' => 'principal.'.$school->id.'@example.com',
                 'role' => 'principal',
                 'school_id' => $school->id,
                 'is_approved' => true,
@@ -53,8 +53,8 @@ class DatabaseSeeder extends Seeder
 
             // Create Health Coordinator for the school
             $coordinator = User::factory()->create([
-                'name' => "Nurse " . fake()->randomElement($filipinoFirstNames) . " " . fake()->randomElement($filipinoLastNames),
-                'email' => "nurse." . $school->id . "@example.com",
+                'name' => 'Nurse '.fake()->randomElement($filipinoFirstNames).' '.fake()->randomElement($filipinoLastNames),
+                'email' => 'nurse.'.$school->id.'@example.com',
                 'role' => 'health_coordinator',
                 'school_id' => $school->id,
                 'is_approved' => true,
@@ -64,9 +64,9 @@ class DatabaseSeeder extends Seeder
             // 3. Create Students and their records
             Student::factory(20)->create([
                 'school_id' => $school->id,
-                'first_name' => fn() => fake()->randomElement($filipinoFirstNames),
-                'last_name' => fn() => fake()->randomElement($filipinoLastNames),
-                'guardian_name' => fn() => fake()->randomElement($filipinoFirstNames) . " " . fake()->randomElement($filipinoLastNames),
+                'first_name' => fn () => fake()->randomElement($filipinoFirstNames),
+                'last_name' => fn () => fake()->randomElement($filipinoLastNames),
+                'guardian_name' => fn () => fake()->randomElement($filipinoFirstNames).' '.fake()->randomElement($filipinoLastNames),
             ])->each(function ($student) use ($coordinator) {
                 // TODO: HealthRecord was replaced by HealthExamination
                 // Kept for reference - commented out to prevent errors

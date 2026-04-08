@@ -4,18 +4,17 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RolePermissions\Pages\EditRolePermissions;
 use App\Filament\Resources\RolePermissions\Pages\ListRolePermissions;
+use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Spatie\Permission\Models\Role;
-use BackedEnum;
 use UnitEnum;
 
 class RolePermissionResource extends Resource

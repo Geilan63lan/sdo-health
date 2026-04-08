@@ -7,8 +7,8 @@ use Carbon\CarbonImmutable;
 use Filament\Auth\Http\Responses\Contracts\LogoutResponse as FilamentLogoutResponse;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
 class AppServiceProvider extends ServiceProvider

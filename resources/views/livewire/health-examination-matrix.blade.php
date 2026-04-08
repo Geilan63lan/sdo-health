@@ -73,7 +73,7 @@
 }
 .hem-tbl tr:hover .f-col { background: #f8fafc; }
 
-/* Grade header cells */
+/* Grade header cells - clickable */
 .hem-tbl .g-th {
     min-width: 100px; padding: 8px 6px 6px;
     text-align: center; font-size: 11.5px; font-weight: 600;
@@ -81,11 +81,33 @@
     border-bottom: 2px solid #e2e8f0; border-right: 1px solid #f1f5f9;
     white-space: nowrap; line-height: 1.3;
 }
+.hem-tbl .g-th { 
+    cursor: pointer; 
+    transition: all .15s ease; 
+}
+.hem-tbl .g-th:hover { 
+    background: #e0e7ff !important; 
+    color: #4338ca !important;
+    transform: scale(1.02);
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
+}
+.hem-tbl .g-th:hover::after {
+    content: "Edit";
+    display: block;
+    font-size: 8px;
+    font-weight: 700;
+    margin-top: 4px;
+    color: #4338ca;
+}
 .hem-tbl .g-th.curr  { background: #eff6ff; border-bottom-color: #1d4ed8; color: #1d4ed8; }
 .hem-tbl .g-th.past  { color: #94a3b8; }
 .hem-tbl .g-th small { display: block; font-size: 9px; margin-top: 2px; }
 .hem-tbl .g-th.curr small { color: #1d4ed8; font-weight: 700; }
 .hem-tbl .g-th.past small { color: #93c5fd; }
+
+/* Validation badges */
+.hem-validated-badge { display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px; background: #fef3c7; color: #92400e; border-radius: 4px; font-size: 9px; font-weight: 700; }
+.hem-reverted-badge { display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px; background: #dbeafe; color: #1e40af; border-radius: 4px; font-size: 9px; font-weight: 700; }
 
 /* Hidden column */
 .hem-tbl .th-hidden {
@@ -165,6 +187,21 @@
 .hem-save-btn:disabled { opacity: .5; cursor: not-allowed; }
 .hem-save-btn svg      { width: 11px; height: 11px; flex-shrink: 0; }
 
+.hem-validate-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+    width: 100%; padding: 5px 8px; font-size: 11px; font-weight: 600;
+    border-radius: 6px; border: 1px solid #86efac; background: #f0fdf4;
+    color: #16a34a; cursor: pointer; white-space: nowrap; font-family: inherit;
+    transition: .15s;
+}
+.hem-validate-btn:hover { background: #dcfce7; border-color: #4ade80; }
+.hem-validated-badge {
+    display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+    width: 100%; padding: 5px 8px; font-size: 11px; font-weight: 600;
+    border-radius: 6px; border: 1px solid #fcd34d; background: #fef3c7;
+    color: #92400e; cursor: default; white-space: nowrap; font-family: inherit;
+}
+
 /* Toast */
 [x-cloak] { display: none !important; }
 .hem-toast {
@@ -234,9 +271,13 @@
                     $isPast = $gi < $currentIdx;
                 @endphp
                 <th class="g-th {{ $isCurr ? 'curr' : ($isPast ? 'past' : '') }}"
-                    style="background:{{ $cellBg($grade) }}">
+                    style="background:{{ $cellBg($grade) }}"
+                    wire:click="openModal('{{ $grade }}')">
                     {{ $grade }}
                     @if ($isCurr) <small>● now</small> @elseif ($isPast) <small>✓</small> @endif
+                    @if (($data[$grade]['validated'] ?? false) && !($data[$grade]['reverted_at'] ?? null))
+                        <span style="display:block;font-size:8px;color:#92400e;">✓VALIDATED</span>
+                    @endif
                 </th>
             @endif
         @endforeach
@@ -480,29 +521,84 @@
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
 </tr>
 
+<tr>
+    <td class="f-col">Designation</td>
+    @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
+        <td class="d-cell" style="background:{{ $cellBg($grade) }}">
+            <input type="text" wire:model.defer="data.{{ $grade }}.designation" placeholder="—" class="hem-input" style="font-size:10px;" />
+        </td>
+    @endif @endforeach
+    @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
+</tr>
+
+<tr>
+    <td class="f-col">Examined By</td>
+    @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
+        <td class="d-cell" style="background:{{ $cellBg($grade) }}">
+            <input type="text" wire:model.defer="data.{{ $grade }}.examined_by_name" placeholder="—" class="hem-input" style="font-size:10px;" />
+        </td>
+    @endif @endforeach
+    @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
+</tr>
+
 {{-- ══ SAVE ROW ══ --}}
 <tr class="hem-save-row">
     <td class="f-col">Action</td>
     @foreach ($gradeLevels as $grade)
         @php $gradeIndex = $loop->index; @endphp
         @if ($this->isVisible($grade))
-        <td style="padding:6px 4px; background:#f8fafc; border-right:1px solid #f1f5f9;">
-            <button
-                wire:click="performSave({{ $gradeIndex }})"
-                wire:loading.attr="disabled"
-                wire:target="performSave({{ $gradeIndex }})"
-                class="hem-save-btn">
-                <span wire:loading.remove wire:target="performSave({{ $gradeIndex }})">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" style="width:11px;height:11px;display:inline;vertical-align:middle;margin-right:2px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                    Save
-                </span>
-                <span wire:loading wire:target="performSave({{ $gradeIndex }})">Saving…</span>
-            </button>
+        <td style="padding:4px 4px; background:#f8fafc; border-right:1px solid #f1f5f9;">
+            <div style="display:flex;flex-direction:column;gap:4px;">
+                @if (!$this->canSave($grade))
+                <div style="display:flex;align-items:center;justify-content:center;gap:4px;padding:5px 8px;background:#fef3c7;border:1px solid #fcd34d;border-radius:6px;color:#92400e;font-size:11px;font-weight:600;">
+                    <svg style="width:11px;height:11px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
+                    Locked
+                </div>
+                @else
+                <button
+                    wire:click="performSave({{ $gradeIndex }})"
+                    wire:loading.attr="disabled"
+                    wire:target="performSave({{ $gradeIndex }})"
+                    class="hem-save-btn">
+                    <span wire:loading.remove wire:target="performSave({{ $gradeIndex }})">Save</span>
+                    <span wire:loading wire:target="performSave({{ $gradeIndex }})">Saving…</span>
+                </button>
+                @endif
+                @if ($this->isAdmin())
+                    @if (($data[$grade]['validated'] ?? false) && !($data[$grade]['reverted_at'] ?? null))
+                    <button
+                        wire:click="setGradeForInvalidate('{{ $grade }}')"
+                        class="hem-validate-btn"
+                        style="background:#fef3c7;border-color:#fcd34d;color:#92400e;">
+                        Invalidate
+                    </button>
+                    @elseif (!($data[$grade]['validated'] ?? false))
+                    <button
+                        wire:click="setGradeForValidate('{{ $grade }}')"
+                        wire:loading.attr="disabled"
+                        wire:target="setGradeForValidate('{{ $grade }}')"
+                        class="hem-validate-btn">
+                        <span wire:loading.remove wire:target="setGradeForValidate('{{ $grade }}')">Validate</span>
+                        <span wire:loading wire:target="setGradeForValidate('{{ $grade }}')">Validating…</span>
+                    </button>
+                    @endif
+                @else
+                    @if (!($data[$grade]['validated'] ?? false))
+                    <button
+                        wire:click="setGradeForValidate('{{ $grade }}')"
+                        class="hem-validate-btn">
+                        Validate
+                    </button>
+                    @endif
+                @endif
+            </div>
         </td>
         @endif
     @endforeach
     @if (!$showAll && $hiddenCount > 0)<td style="background:#f8fafc;"></td>@endif
 </tr>
+
+
 
 </tbody>
 </table>
@@ -513,6 +609,290 @@
     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
     <span x-text="toastGrade + ' saved successfully'"></span>
 </div>
+
+{{-- VALIDATION CONFIRMATION POPUP --}}
+@if ($pendingValidationGrade)
+<div style="position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;padding:1rem;">
+    <div style="background:white;border-radius:0.75rem;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);padding:1.5rem;width:100%;max-width:24rem;border:4px solid #f59e0b;">
+        <div style="text-align:center;margin-bottom:1rem;">
+            <div style="width:3rem;height:3rem;background:#fef3c7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem;">
+                <svg style="width:1.5rem;height:1.5rem;color:#92400e;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            </div>
+            <h3 style="font-size:1.125rem;font-weight:700;color:#111827;">Confirm Validation</h3>
+        </div>
+        <p style="font-size:0.875rem;color:#374151;text-align:center;margin-bottom:0.5rem;">Validate entry for <strong>{{ $pendingValidationGrade }}</strong>?</p>
+        <p style="font-size:0.75rem;color:#78350f;text-align:center;margin-bottom:1rem;padding:0.5rem;background:#fef3c7;border-radius:0.25rem;">⚠️ Once validated, only admins can edit or invalidate this entry.</p>
+        <div style="display:flex;gap:0.5rem;">
+            <button wire:click="confirmValidate()" style="flex:1;background:#16a34a;color:white;padding:0.5rem 1rem;border-radius:0.5rem;font-weight:600;border:none;">Yes, Validate</button>
+            <button wire:click="cancelValidate()" style="flex:1;background:#ef4444;color:white;padding:0.5rem 1rem;border-radius:0.5rem;font-weight:600;border:none;">Cancel</button>
+        </div>
+    </div>
+</div>
+@endif
+
+{{-- ══ MODAL FOR EDITING ══ --}}
+@if ($isModalOpen && $selectedGrade)
+<div style="position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.5);display:flex;align-items:flex-start;justify-content:center;padding:2rem;overflow-y:auto;">
+    <div style="background:white;border-radius:0.75rem;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);padding:1.5rem;width:100%;max-width:48rem;margin:auto;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+            <h3 style="font-size:1.125rem;font-weight:700;color:#111827;">
+                Edit: {{ $selectedGrade }}
+                @if (($data[$selectedGrade]['validated'] ?? false) && !($data[$selectedGrade]['reverted_at'] ?? null))
+                    <span style="display:inline-flex;align-items:center;padding:2px 6px;background:#fef3c7;color:#92400e;border-radius:4px;font-size:9px;font-weight:700;margin-left:8px;">VALIDATED</span>
+                @endif
+            </h3>
+            <button wire:click="closeModal()" style="color:#9ca3af;background:none;border:none;cursor:pointer;padding:4px;">
+                <svg style="width:1.5rem;height:1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        
+        <div style="max-height:60vh;overflow-y:auto;">
+            {{-- EXAMINATION INFO --}}
+            <div style="background:#f8fafc;padding:0.5rem;border-radius:0.25rem;margin-bottom:1rem;">
+                <span style="font-size:0.75rem;font-weight:700;text-transform:uppercase;color:#64748b;">Examination Info</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-bottom:1rem;">
+                <div>
+                    <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;margin-bottom:0.25rem;">Date of Exam</label>
+                    <input type="date" wire:model.defer="data.{{ $selectedGrade }}.date_of_examination" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;" />
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;margin-bottom:0.25rem;">Designation</label>
+                    <input type="text" wire:model.defer="data.{{ $selectedGrade }}.designation" placeholder="School Nurse, etc." style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;" />
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;margin-bottom:0.25rem;">Examined By</label>
+                    <input type="text" wire:model.defer="data.{{ $selectedGrade }}.examined_by_name" placeholder="Enter name" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;" />
+                </div>
+            </div>
+
+            {{-- PHYSICAL MEASUREMENTS --}}
+            <div style="background:#eff6ff;padding:0.5rem;border-radius:0.25rem;margin-bottom:1rem;">
+                <span style="font-size:0.75rem;font-weight:700;text-transform:uppercase;color:#1d4ed8;">Physical Measurements</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.75rem;margin-bottom:1rem;">
+                <div>
+                    <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;margin-bottom:0.25rem;">Height (cm)</label>
+                    <input type="number" step="0.01" wire:model.defer="data.{{ $selectedGrade }}.height_cm" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;" />
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;margin-bottom:0.25rem;">Weight (kg)</label>
+                    <input type="number" step="0.01" wire:model.defer="data.{{ $selectedGrade }}.weight_kg" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;" />
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.75rem;margin-bottom:1rem;">
+                <div>
+                    <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;margin-bottom:0.25rem;">NS (BMI/Wt-for-Age)</label>
+                    <select wire:model.defer="data.{{ $selectedGrade }}.ns_bmi_for_age" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;">
+                        <option value="">—</option>
+                        <option value="severely_underweight">Severely Underweight</option>
+                        <option value="underweight">Underweight</option>
+                        <option value="normal">Normal</option>
+                        <option value="overweight">Overweight</option>
+                        <option value="obese">Obese</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;margin-bottom:0.25rem;">NS (Ht-for-Age)</label>
+                    <select wire:model.defer="data.{{ $selectedGrade }}.ns_height_for_age" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;">
+                        <option value="">—</option>
+                        <option value="stunted">Stunted</option>
+                        <option value="normal">Normal</option>
+                    </select>
+                </div>
+            </div>
+
+            {{-- INTERVENTIONS --}}
+            <div style="background:#f0fdf4;padding:0.5rem;border-radius:0.25rem;margin-bottom:1rem;margin-top:1rem;">
+                <span style="font-size:0.75rem;font-weight:700;text-transform:uppercase;color:#15803d;">Interventions</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-bottom:1rem;">
+                <div style="display:flex;align-items:center;gap:0.25rem;">
+                    <input type="checkbox" wire:model.defer="data.{{ $selectedGrade }}.is_4ps_beneficiary" style="width:1rem;height:1rem;" />
+                    <label style="font-size:0.75rem;">4Ps</label>
+                </div>
+                <div style="display:flex;align-items:center;gap:0.25rem;">
+                    <input type="checkbox" wire:model.defer="data.{{ $selectedGrade }}.is_sbfp_beneficiary" style="width:1rem;height:1rem;" />
+                    <label style="font-size:0.75rem;">SBFP</label>
+                </div>
+                <div style="display:flex;align-items:center;gap:0.25rem;">
+                    <input type="checkbox" wire:model.defer="data.{{ $selectedGrade }}.deworming_july" style="width:1rem;height:1rem;" />
+                    <label style="font-size:0.75rem;">Deworm Jul</label>
+                </div>
+                <div style="display:flex;align-items:center;gap:0.25rem;">
+                    <input type="checkbox" wire:model.defer="data.{{ $selectedGrade }}.deworming_january" style="width:1rem;height:1rem;" />
+                    <label style="font-size:0.75rem;">Deworm Jan</label>
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.75rem;margin-bottom:1rem;">
+                <div style="display:flex;align-items:center;gap:0.25rem;">
+                    <input type="checkbox" wire:model.defer="data.{{ $selectedGrade }}.iron_supplementation" style="width:1rem;height:1rem;" />
+                    <label style="font-size:0.75rem;">Iron Supplement</label>
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;margin-bottom:0.25rem;">Immunization</label>
+                    <input type="text" wire:model.defer="data.{{ $selectedGrade }}.immunization_kind" placeholder="Specify..." style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;" />
+                </div>
+            </div>
+
+            {{-- VITALS --}}
+            <div style="background:#f5f3ff;padding:0.5rem;border-radius:0.25rem;margin-bottom:1rem;margin-top:1rem;">
+                <span style="font-size:0.75rem;font-weight:700;text-transform:uppercase;color:#6d28d9;">Vitals</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-bottom:1rem;">
+                <div>
+                    <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;">Menarche</label>
+                    <input type="text" wire:model.defer="data.{{ $selectedGrade }}.menarche" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;" />
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;">Temp</label>
+                    <input type="text" wire:model.defer="data.{{ $selectedGrade }}.temperature" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;" />
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;">BP</label>
+                    <input type="text" wire:model.defer="data.{{ $selectedGrade }}.blood_pressure" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;" />
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;">Pulse</label>
+                    <input type="text" wire:model.defer="data.{{ $selectedGrade }}.pulse_rate" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;" />
+                </div>
+            </div>
+
+            {{-- SCREENINGS --}}
+            <div style="background:#f0fdfa;padding:0.5rem;border-radius:0.25rem;margin-bottom:1rem;margin-top:1rem;">
+                <span style="font-size:0.75rem;font-weight:700;text-transform:uppercase;color:#0f766e;">Vision/Auditory</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-bottom:1rem;">
+                <div>
+                    <label style="display:block;font-size:0.7rem;font-weight:500;color:#374151;margin-bottom:0.25rem;">Vision L</label>
+                    <select wire:model.defer="data.{{ $selectedGrade }}.vision_l" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;">
+                        <option value="">—</option>
+                        <option value="normal">Normal</option>
+                        <option value="needs_referral">Needs Referral</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.7rem;font-weight:500;color:#374151;margin-bottom:0.25rem;">Vision R</label>
+                    <select wire:model.defer="data.{{ $selectedGrade }}.vision_r" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;">
+                        <option value="">—</option>
+                        <option value="normal">Normal</option>
+                        <option value="needs_referral">Needs Referral</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.7rem;font-weight:500;color:#374151;margin-bottom:0.25rem;">Hearing L</label>
+                    <select wire:model.defer="data.{{ $selectedGrade }}.auditory_l" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;">
+                        <option value="">—</option>
+                        <option value="normal">Normal</option>
+                        <option value="needs_referral">Needs Referral</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.7rem;font-weight:500;color:#374151;margin-bottom:0.25rem;">Hearing R</label>
+                    <select wire:model.defer="data.{{ $selectedGrade }}.auditory_r" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;">
+                        <option value="">—</option>
+                        <option value="normal">Normal</option>
+                        <option value="needs_referral">Needs Referral</option>
+                    </select>
+                </div>
+            </div>
+
+            {{-- FINDINGS --}}
+            <div style="background:#fff7ed;padding:0.5rem;border-radius:0.25rem;margin-bottom:1rem;margin-top:1rem;">
+                <span style="font-size:0.75rem;font-weight:700;text-transform:uppercase;color:#c2410c;">Examination Findings</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.5rem;margin-bottom:1rem;">
+                <div>
+                    <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;">Skin/Scalp</label>
+                    <select wire:model.defer="data.{{ $selectedGrade }}.skin_scalp" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;">
+                        <option value="">—</option>
+                        <option value="normal">Normal</option>
+                        <option value="abnormal">Abnormal</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;">Eyes/Ears/Nose</label>
+                    <select wire:model.defer="data.{{ $selectedGrade }}.eyes_ears_nose" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;">
+                        <option value="">—</option>
+                        <option value="normal">Normal</option>
+                        <option value="abnormal">Abnormal</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;">Mouth/Throat</label>
+                    <select wire:model.defer="data.{{ $selectedGrade }}.mouth_neck_throat" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;">
+                        <option value="">—</option>
+                        <option value="normal">Normal</option>
+                        <option value="abnormal">Abnormal</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;">Lungs/Heart</label>
+                    <select wire:model.defer="data.{{ $selectedGrade }}.lungs_heart" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;">
+                        <option value="">—</option>
+                        <option value="normal">Normal</option>
+                        <option value="abnormal">Abnormal</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;">Abdomen</label>
+                    <select wire:model.defer="data.{{ $selectedGrade }}.abdomen" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;">
+                        <option value="">—</option>
+                        <option value="normal">Normal</option>
+                        <option value="abnormal">Abnormal</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;">Deformities</label>
+                    <select wire:model.defer="data.{{ $selectedGrade }}.deformities" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;">
+                        <option value="">—</option>
+                        <option value="none">None</option>
+                        <option value="present">Present</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;margin-bottom:0.25rem;">Others, specify</label>
+                <input type="text" wire:model.defer="data.{{ $selectedGrade }}.others_specify" placeholder="Other findings..." style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;" />
+            </div>
+        </div>
+
+        <div style="display:flex;gap:0.75rem;margin-top:1.5rem;padding-top:1rem;border-top:1px solid #e5e7eb;">
+            @if (($data[$selectedGrade]['validated'] ?? false) && !($data[$selectedGrade]['reverted_at'] ?? null) && !$this->isAdmin())
+            <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.5rem;background:#fef3c7;border:1px solid #fcd34d;border-radius:0.5rem;color:#92400e;font-size:0.875rem;font-weight:600;">
+                <svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
+                Locked - Contact Admin to Edit
+            </div>
+            @else
+            <button 
+                wire:click="performSaveByGrade('{{ $selectedGrade }}')" 
+                style="flex:1;background:#2563eb;color:white;padding:0.5rem 1rem;border-radius:0.5rem;font-weight:500;font-size:0.875rem;cursor:pointer;border:none;"
+            >
+                Save
+            </button>
+            @endif
+            @if ($this->isAdmin())
+                @if (($data[$selectedGrade]['validated'] ?? false) && !($data[$selectedGrade]['reverted_at'] ?? null))
+                <button wire:click="setGradeForInvalidate('{{ $selectedGrade }}')" style="background:#f59e0b;color:white;padding:0.5rem 1rem;border-radius:0.5rem;font-weight:500;font-size:0.875rem;cursor:pointer;border:none;">
+                    Invalidate
+                </button>
+                @elseif (!($data[$selectedGrade]['validated'] ?? false))
+                <button wire:click="setGradeForValidate('{{ $selectedGrade }}')" style="background:#16a34a;color:white;padding:0.5rem 1rem;border-radius:0.5rem;font-weight:500;font-size:0.875rem;cursor:pointer;border:none;">
+                    Validate
+                </button>
+                @endif
+            @else
+                @if (!($data[$selectedGrade]['validated'] ?? false))
+                <button wire:click="setGradeForValidate('{{ $selectedGrade }}')" style="background:#16a34a;color:white;padding:0.5rem 1rem;border-radius:0.5rem;font-weight:500;font-size:0.875rem;cursor:pointer;border:none;">
+                    Validate
+                </button>
+                @endif
+            @endif
+        </div>
+    </div>
+</div>
+@endif
 
 </div>
 

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\RolePermissions\Pages;
 
 use App\Filament\Resources\RolePermissionResource;
-use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
 class ListRolePermissions extends ListRecords

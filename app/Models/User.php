@@ -92,6 +92,16 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasRole(['sdo_admin', 'health_coordinator', 'principal']);
     }
 
+    public function isAdmin(): bool
+    {
+        return $this->hasRole(['sdo_admin']);
+    }
+
+    public function isNurse(): bool
+    {
+        return $this->hasRole(['nurse']);
+    }
+
     /**
      * Override Spatie's permissions relation to include expires_at pivot column.
      */

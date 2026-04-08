@@ -13,6 +13,7 @@ class HealthExamination extends Model
     protected $fillable = [
         'student_id',
         'examined_by',
+        'examiner_name',
         'grade_level',
         'date_of_examination',
         'designation',
@@ -43,6 +44,11 @@ class HealthExamination extends Model
         'deformities',
         'others_specify',
         'medications',
+        'validated',
+        'validated_at',
+        'validated_by',
+        'reverted_at',
+        'reverted_by',
     ];
 
     protected function casts(): array
@@ -68,5 +74,76 @@ class HealthExamination extends Model
     public function examinedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'examined_by');
+    }
+
+    public function validatedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'validated_by');
+    }
+
+    public function revertedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reverted_by');
+    }
+
+    public function isValidated(): bool
+    {
+        return $this->validated === true;
+    }
+
+    public function isReverted(): bool
+    {
+        return $this->reverted_at !== null;
+    }
+
+    public function canEdit(?User $user): bool
+    {
+        if ($user === null) {
+            return false;
+        }
+
+        if ($this->isValidated() && ! $this->isReverted()) {
+            return $user->isAdmin();
+        }
+
+        return ! $this->isValidated() || $user->isAdmin();
+    }
+
+    public function scopeValidated($query)
+    {
+        return $query->where('validated', true);
+    }
+
+    public function scopeUnvalidated($query)
+    {
+        return $query->where('validated', false)->orWhereNull('validated');
+    }
+
+    public function validate(?User $user): void
+    {
+        $this->validated = true;
+        $this->validated_at = now();
+        $this->validated_by = $user?->id;
+        $this->save();
+    }
+
+    public function revert(?User $user): void
+    {
+        $this->validated = false;
+        $this->validated_at = null;
+        $this->validated_by = null;
+        $this->reverted_at = now();
+        $this->reverted_by = $user?->id;
+        $this->save();
+    }
+
+    public function invalidate(?User $user): void
+    {
+        $this->validated = false;
+        $this->validated_at = null;
+        $this->validated_by = null;
+        $this->reverted_at = now();
+        $this->reverted_by = $user?->id;
+        $this->save();
     }
 }

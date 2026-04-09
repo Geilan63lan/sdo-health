@@ -24,9 +24,10 @@
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
     <style>
         .card {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
         }
         /* Filament login override */
         .fi-login min-h-screen {
@@ -37,15 +38,15 @@
 </head>
 <body class="font-sans antialiased min-h-screen relative">
     <!-- Background -->
-    <div class="absolute inset-0 -z-10 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900"></div>
+    <div class="absolute inset-0 -z-10 bg-gradient-to-br from-cyan-400 via-blue-400 to-sky-600"></div>
 
     <div class="min-h-screen flex items-center justify-center py-12 px-4">
         <div class="w-full max-w-md">
             <!-- Logo -->
             <div class="text-center mb-8">
                 <img src="/images/sdo-logo.png" alt="SDO Logo" class="h-24 mx-auto mb-4">
-                <h1 class="text-3xl font-bold text-white">SDO Health</h1>
-                <p class="text-blue-200 mt-1 font-medium">Legazpi City Health System</p>
+                <h1 class="text-3xl font-bold text-slate-800">SDO Health</h1>
+                <p class="text-slate-600 mt-1 font-medium">Legazpi City Health System</p>
             </div>
 
             <!-- Auth Card -->
@@ -54,7 +55,7 @@
             </div>
 
             <!-- Footer -->
-            <div class="text-center mt-6 text-sm text-blue-200">
+            <div class="text-center mt-6 text-sm text-blue-100/70">
                 <p>&copy; 2026 Legazpi District Health System. All rights reserved.</p>
             </div>
         </div>

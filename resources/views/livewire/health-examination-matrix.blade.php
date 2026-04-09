@@ -138,6 +138,7 @@
 }
 .hem-tbl tr:hover .d-cell { background: rgba(0,0,0,0.02); }
 .hem-tbl .d-cell.locked  { background: #f8fafc !important; min-width: 72px; }
+.hem-locked-cell { display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 11px; height: 100%; }
 
 /* Split cell (Jul/Jan, L/R) */
 .hem-split  { display: flex; }
@@ -334,7 +335,11 @@
     <td class="f-col">Date of Examination</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
+            @if($this->canSave($grade))
             <input type="date" wire:model.defer="data.{{ $grade }}.date_of_examination" class="hem-input" />
+            @else
+            <div class="hem-locked-cell">—</div>
+            @endif
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -344,7 +349,11 @@
     <td class="f-col">Height (in cm)</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
+            @if($this->canSave($grade))
             <input type="number" step="0.01" min="0" placeholder="—" wire:model.defer="data.{{ $grade }}.height_cm" class="hem-input" />
+            @else
+            <div class="hem-locked-cell">—</div>
+            @endif
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -354,7 +363,11 @@
     <td class="f-col">Weight (in kg)</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
+            @if($this->canSave($grade))
             <input type="number" step="0.01" min="0" placeholder="—" wire:model.defer="data.{{ $grade }}.weight_kg" class="hem-input" />
+            @else
+            <div class="hem-locked-cell">—</div>
+            @endif
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -364,9 +377,13 @@
     <td class="f-col">NS (BMI/Wt-for-Age)</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
+            @if($this->canSave($grade))
             <select wire:model.defer="data.{{ $grade }}.ns_bmi_for_age" class="hem-select">
                 @foreach ($legends['ns_bmi'] as $v => $l)<option value="{{ $v }}">{{ $l }}</option>@endforeach
             </select>
+            @else
+            <div class="hem-locked-cell">—</div>
+            @endif
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -376,9 +393,13 @@
     <td class="f-col">NS (Height-for-Age)</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
+            @if($this->canSave($grade))
             <select wire:model.defer="data.{{ $grade }}.ns_height_for_age" class="hem-select">
                 @foreach ($legends['ns_height'] as $v => $l)<option value="{{ $v }}">{{ $l }}</option>@endforeach
             </select>
+            @else
+            <div class="hem-locked-cell">—</div>
+            @endif
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -391,7 +412,11 @@
     <td class="f-col">4Ps Beneficiary (√ or X)</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
+            @if($this->canSave($grade))
             <input type="checkbox" wire:model.defer="data.{{ $grade }}.is_4ps_beneficiary" class="hem-cb" />
+            @else
+            <div class="hem-locked-cell">—</div>
+            @endif
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -401,7 +426,11 @@
     <td class="f-col">SBFP Beneficiary (√ or X)</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
+            @if($this->canSave($grade))
             <input type="checkbox" wire:model.defer="data.{{ $grade }}.is_sbfp_beneficiary" class="hem-cb" />
+            @else
+            <div class="hem-locked-cell">—</div>
+            @endif
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -412,6 +441,7 @@
     <td class="f-col">Deworming (√ or X)</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="padding:0; background:{{ $cellBg($grade) }}">
+            @if($this->canSave($grade))
             <div class="hem-split">
                 <div class="hem-half">
                     <span class="hem-sub-lbl amber">Jul</span>
@@ -422,6 +452,9 @@
                     <input type="checkbox" wire:model.defer="data.{{ $grade }}.deworming_january" class="hem-cb" />
                 </div>
             </div>
+            @else
+            <div class="hem-locked-cell">—</div>
+            @endif
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -431,7 +464,11 @@
     <td class="f-col">Iron Supplementation (√ or X)</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
+            @if($this->canSave($grade))
             <input type="checkbox" wire:model.defer="data.{{ $grade }}.iron_supplementation" class="hem-cb" />
+            @else
+            <div class="hem-locked-cell">—</div>
+            @endif
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -441,7 +478,11 @@
     <td class="f-col">Immunization (Specify)</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
+            @if($this->canSave($grade))
             <input type="text" wire:model.defer="data.{{ $grade }}.immunization_kind" placeholder="—" class="hem-input" />
+            @else
+            <div class="hem-locked-cell">—</div>
+            @endif
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -461,7 +502,11 @@
     <td class="f-col">{{ $f['label'] }}</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
+            @if($this->canSave($grade))
             <input type="text" wire:model.defer="data.{{ $grade }}.{{ $f['key'] }}" placeholder="—" class="hem-input" />
+            @else
+            <div class="hem-locked-cell">—</div>
+            @endif
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -475,6 +520,7 @@
     <td class="f-col">Vision Screening</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="padding:0; background:{{ $cellBg($grade) }}">
+            @if($this->canSave($grade))
             <div class="hem-split">
                 <div class="hem-half">
                     <span class="hem-sub-lbl teal">L</span>
@@ -489,6 +535,9 @@
                     </select>
                 </div>
             </div>
+            @else
+            <div class="hem-locked-cell">—</div>
+            @endif
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -498,6 +547,7 @@
     <td class="f-col">Auditory Screening</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="padding:0; background:{{ $cellBg($grade) }}">
+            @if($this->canSave($grade))
             <div class="hem-split">
                 <div class="hem-half">
                     <span class="hem-sub-lbl teal">L</span>
@@ -512,6 +562,9 @@
                     </select>
                 </div>
             </div>
+            @else
+            <div class="hem-locked-cell">—</div>
+            @endif
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -532,6 +585,7 @@
     <td class="f-col">{{ $f['label'] }}</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}; padding: 2px;">
+            @if($this->canSave($grade))
             @php($fieldKey = $f['key'])
             @php($currentValues = $data[$grade][$fieldKey] ?? [])
             <div class="hem-multi-wrapper" 
@@ -615,6 +669,9 @@
                     </div>
                 </div>
             </div>
+            @else
+            <div class="hem-locked-cell">—</div>
+            @endif
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -628,7 +685,11 @@
     <td class="f-col">Others, specify</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
+            @if($this->canSave($grade))
             <input type="text" wire:model.defer="data.{{ $grade }}.others_specify" placeholder="—" class="hem-input" />
+            @else
+            <div class="hem-locked-cell">—</div>
+            @endif
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -638,7 +699,11 @@
     <td class="f-col">Examined By</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
+            @if($this->canSave($grade))
             <input type="text" wire:model.defer="data.{{ $grade }}.examined_by_name" placeholder="—" class="hem-input" style="font-size:10px;" />
+            @else
+            <div class="hem-locked-cell">—</div>
+            @endif
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -648,7 +713,11 @@
     <td class="f-col">Designation</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
+            @if($this->canSave($grade))
             <input type="text" wire:model.defer="data.{{ $grade }}.designation" placeholder="—" class="hem-input" style="font-size:10px;" />
+            @else
+            <div class="hem-locked-cell">—</div>
+            @endif
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -750,6 +819,7 @@
         </div>
         
         <div style="max-height:60vh;overflow-y:auto;">
+            @if($this->canSave($selectedGrade))
             {{-- EXAMINATION INFO --}}
             <div style="background:#f8fafc;padding:0.5rem;border-radius:0.25rem;margin-bottom:1rem;">
                 <span style="font-size:0.75rem;font-weight:700;text-transform:uppercase;color:#64748b;">Examination Info</span>
@@ -959,6 +1029,7 @@
                 <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;margin-bottom:0.25rem;">Others, specify</label>
                 <input type="text" wire:model.defer="data.{{ $selectedGrade }}.others_specify" placeholder="Other findings..." style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;" />
             </div>
+            @endif
         </div>
 
         <div style="display:flex;gap:0.75rem;margin-top:1.5rem;padding-top:1rem;border-top:1px solid #e5e7eb;">

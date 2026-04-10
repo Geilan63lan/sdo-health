@@ -58,6 +58,11 @@ class Student extends Model
         return $this->hasOne(MedicalHistory::class);
     }
 
+    public function medicalHistoryItems(): HasMany
+    {
+        return $this->hasMany(MedicalHistoryItem::class);
+    }
+
     public function healthExaminations(): HasMany
     {
         return $this->hasMany(HealthExamination::class);

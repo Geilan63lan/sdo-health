@@ -2,9 +2,6 @@
 
 namespace App\Filament\Resources\Students\RelationManagers;
 
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\EditAction;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -20,7 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MedicalHistoryRelationManager extends RelationManager
 {
-    protected static string $relationship = 'medicalHistory';
+    protected static string $relationship = 'medicalHistoryItems';
 
     public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
@@ -134,32 +131,32 @@ class MedicalHistoryRelationManager extends RelationManager
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('grade_level')
+                    ->label('Grade')
+                    ->badge(),
                 Tables\Columns\IconColumn::make('has_allergies')
                     ->label('Allergies')
                     ->boolean(),
+                Tables\Columns\TextColumn::make('allergy_types')
+                    ->label('Allergy Types')
+                    ->formatStateUsing(fn ($state) => is_array($state) && ! empty($state) ? implode(', ', $state) : '—')
+                    ->limit(40),
                 Tables\Columns\IconColumn::make('has_medical_conditions')
                     ->label('Conditions')
                     ->boolean(),
+                Tables\Columns\TextColumn::make('condition_types')
+                    ->label('Condition Types')
+                    ->formatStateUsing(fn ($state) => is_array($state) && ! empty($state) ? implode(', ', $state) : '—')
+                    ->limit(40),
                 Tables\Columns\IconColumn::make('has_past_surgery')
                     ->label('Surgery')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('dominant_hand')
-                    ->label('Handedness')
-                    ->formatStateUsing(fn (string $state): string => ucfirst($state)),
+                Tables\Columns\TextColumn::make('surgery_details')
+                    ->label('Surgery Details')
+                    ->limit(40),
             ])
-            ->filters([
-                //
-            ])
-            ->recordActions([
-                EditAction::make(),
-                DeleteAction::make(),
-            ])
-            ->headerActions([
-                CreateAction::make()
-                    ->hidden(fn (RelationManager $livewire) => $livewire->getOwnerRecord()->medicalHistory()->exists()),
-            ])
-            ->bulkActions([
-                //
-            ]);
+            ->recordActions([])
+            ->headerActions([])
+            ->defaultSort('grade_level', 'desc');
     }
 }

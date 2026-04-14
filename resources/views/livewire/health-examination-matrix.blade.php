@@ -14,7 +14,7 @@
 <div
     wire:ignore.self
     x-data="{ toastShow: false, toastGrade: '', openMultiSelect: $wire.entangle('openMultiSelect') }"
-    x-on:saved.window="toastShow = true; toastGrade = $event.detail.grade; setTimeout(() => toastShow = false, 2500)"
+    x-on:hem-saved.window="toastShow = true; toastGrade = $event.detail.grade; setTimeout(() => toastShow = false, 2500)"
 >
 <style>
 .hem { font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px; color: #1e293b; position: relative; }

@@ -349,7 +349,7 @@ class HealthExaminationMatrix extends Component
 
         $this->data[$grade]['id'] = $record->id;
 
-        $this->dispatch('saved', grade: $grade);
+        $this->dispatch('hem-saved', grade: $grade);
     }
 
     public function toggleShowAll(): void
@@ -384,14 +384,14 @@ class HealthExaminationMatrix extends Component
     public function render()
     {
         $gradeLevels = GradeLevel::ordered();
-        $hiddenCount = count(array_filter($gradeLevels, fn($g) => !$this->isVisible($g)));
-        $currentIdx  = $this->studentGradeLevel ? array_search($this->studentGradeLevel, $gradeLevels) : 0;
+        $hiddenCount = count(array_filter($gradeLevels, fn ($g) => ! $this->isVisible($g)));
+        $currentIdx = $this->studentGradeLevel ? array_search($this->studentGradeLevel, $gradeLevels) : 0;
 
         return view('livewire.health-examination-matrix', [
             'gradeLevels' => $gradeLevels,
-            'legends'     => $this->getLegendOptions(),
+            'legends' => $this->getLegendOptions(),
             'hiddenCount' => $hiddenCount,
-            'currentIdx'  => $currentIdx,
+            'currentIdx' => $currentIdx,
         ]);
     }
 }

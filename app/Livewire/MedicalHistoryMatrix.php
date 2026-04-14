@@ -19,6 +19,8 @@ class MedicalHistoryMatrix extends Component
 
     public bool $showAll = false;
 
+    public int $hiddenCount = 0;
+
     public array $data = [];
 
     public bool $isModalOpen = false;
@@ -302,21 +304,22 @@ class MedicalHistoryMatrix extends Component
 
         $this->data[$grade]['id'] = $record->id;
 
-        $this->dispatch('saved', grade: $grade);
+        $this->dispatch('mhm-saved', grade: $grade);
     }
 
     public function toggleShowAll(): void
     {
         $this->showAll = ! $this->showAll;
+        $this->loadData();
     }
 
     public function isVisible(string $grade): bool
     {
-        if ($this->showAll || ! $this->studentGradeLevel) {
+        if ($this->showAll) {
             return true;
         }
 
-        return GradeLevel::indexOf($grade) <= GradeLevel::indexOf($this->studentGradeLevel);
+        return $grade === $this->studentGradeLevel;
     }
 
     public function toggleAllergyType(string $grade, string $type): void
@@ -407,12 +410,13 @@ class MedicalHistoryMatrix extends Component
     public function render()
     {
         $gradeLevels = GradeLevel::ordered();
-        $hiddenCount = count(array_filter($gradeLevels, fn ($g) => ! $this->isVisible($g)));
+        $visibleGrades = array_filter($gradeLevels, fn ($g) => $this->isVisible($g));
+        $this->hiddenCount = count($gradeLevels) - count($visibleGrades);
         $currentIdx = $this->studentGradeLevel ? array_search($this->studentGradeLevel, $gradeLevels) : 0;
 
         return view('livewire.medical-history-matrix', [
             'gradeLevels' => $gradeLevels,
-            'hiddenCount' => $hiddenCount,
+            'hiddenCount' => $this->hiddenCount,
             'currentIdx' => $currentIdx,
         ]);
     }

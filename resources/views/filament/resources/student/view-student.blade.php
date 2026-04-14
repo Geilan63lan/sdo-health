@@ -4,11 +4,11 @@
     {{ $this->infolist }}
 
     <div class="mt-6">
-        @livewire('health-examination-matrix', ['studentId' => $record->id], key('hem-' . $record->id))
+        @livewire('medical-history-matrix', ['studentId' => $record->id], key('mhm-' . $record->id))
     </div>
 
     <div class="mt-6">
-        @livewire('medical-history-matrix', ['studentId' => $record->id], key('mhm-' . $record->id))
+        @livewire('health-examination-matrix', ['studentId' => $record->id], key('hem-' . $record->id))
     </div>
 
 </x-filament-panels::page>

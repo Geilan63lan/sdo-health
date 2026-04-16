@@ -1067,7 +1067,3 @@
     </div>
 </div>
 @endif
-
-</div>
-
-</div>{{-- end single root --}}

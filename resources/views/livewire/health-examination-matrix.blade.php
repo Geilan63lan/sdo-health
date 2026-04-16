@@ -79,12 +79,12 @@
     border-bottom: 2px solid #e2e8f0; border-right: 1px solid #cbd5e1;
     white-space: nowrap; line-height: 1.3;
 }
-.hem-tbl .g-th { 
-    cursor: pointer; 
-    transition: all .15s ease; 
+.hem-tbl .g-th {
+    cursor: pointer;
+    transition: all .15s ease;
 }
-.hem-tbl .g-th:hover { 
-    background: #e0e7ff !important; 
+.hem-tbl .g-th:hover {
+    background: #e0e7ff !important;
     color: #4338ca !important;
     transform: scale(1.02);
     box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
@@ -330,6 +330,34 @@
 
 {{-- ══ PHYSICAL MEASUREMENTS ══ --}}
 <tr class="hem-sec s-blue"><td colspan="100">Physical Measurements</td></tr>
+
+<tr>
+    <td class="f-col">Examined By</td>
+    @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
+        <td class="d-cell" style="background:{{ $cellBg($grade) }}">
+            @if($this->canSave($grade))
+                <input type="text" wire:model.defer="data.{{ $grade }}.examined_by_name" placeholder="—" class="hem-input" style="font-size:10px;" />
+            @else
+                <div class="hem-locked-cell">—</div>
+            @endif
+        </td>
+    @endif @endforeach
+    @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
+</tr>
+
+<tr>
+    <td class="f-col">Designation</td>
+    @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
+        <td class="d-cell" style="background:{{ $cellBg($grade) }}">
+            @if($this->canSave($grade))
+                <input type="text" wire:model.defer="data.{{ $grade }}.designation" placeholder="—" class="hem-input" style="font-size:10px;" />
+            @else
+                <div class="hem-locked-cell">—</div>
+            @endif
+        </td>
+    @endif @endforeach
+    @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
+</tr>
 
 <tr>
     <td class="f-col">Date of Examination</td>
@@ -588,15 +616,15 @@
             @if($this->canSave($grade))
             @php($fieldKey = $f['key'])
             @php($currentValues = $data[$grade][$fieldKey] ?? [])
-            <div class="hem-multi-wrapper" 
+            <div class="hem-multi-wrapper"
                  wire:key="multi-{{ $grade }}-{{ $fieldKey }}"
-                 x-data="{ 
+                 x-data="{
                      id: '{{ $grade }}-{{ $fieldKey }}',
                      opts: @js(array_keys($legends[$f['legend']])),
                      labels: @js($legends[$f['legend']]),
                      vals: @js($currentValues),
                      get isOpen() { return openMultiSelect === this.id },
-                     toggle() { 
+                     toggle() {
                          if (this.isOpen) {
                              openMultiSelect = null;
                          } else {
@@ -627,7 +655,7 @@
                          this.vals = [];
                          $wire.set('data.{{ $grade }}.{{ $fieldKey }}', []);
                      }
-                 }" 
+                 }"
                  x-init="$watch('openMultiSelect', value => { if(value === id) reposition() })"
                  @click.outside="if(isOpen) openMultiSelect = null"
                  x-on:scroll.window.passive="if(isOpen) reposition()"
@@ -644,14 +672,14 @@
                         <span style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;">Options</span>
                         <button @click.stop="resetAll()" style="font-size:10px;color:#ef4444;background:none;border:none;cursor:pointer;font-weight:700;padding:2px 4px;border-radius:3px;" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='none'">Reset</button>
                     </div>
-                    
+
                     <div style="padding-bottom:40px;"> {{-- extra padding for sticky footer --}}
                         @foreach($legends[$f['key']] as $optVal => $optLabel)
-                            <label style="display:flex;align-items:center;gap:8px;padding:6px 8px;cursor:pointer;font-size:11px;" 
-                                   @mouseenter="$el.style.background='#eff6ff'" 
+                            <label style="display:flex;align-items:center;gap:8px;padding:6px 8px;cursor:pointer;font-size:11px;"
+                                   @mouseenter="$el.style.background='#eff6ff'"
                                    @mouseleave="$el.style.background='white'">
-                                <input type="checkbox" 
-                                       {{ in_array($optVal, $currentValues) ? 'checked' : '' }} 
+                                <input type="checkbox"
+                                       {{ in_array($optVal, $currentValues) ? 'checked' : '' }}
                                        @click.stop="toggleOpt('{{ $optVal }}')"
                                        style="width:14px;height:14px;accent-color:#1d4ed8;">
                                 <span>{{ $optLabel }}</span>
@@ -660,7 +688,7 @@
                     </div>
 
                     <div style="position:sticky;bottom:0;background:white;padding:6px;border-top:1px solid #f1f5f9;display:flex;justify-content:center;">
-                        <button @click.stop="openMultiSelect = null" 
+                        <button @click.stop="openMultiSelect = null"
                                 style="width:100%;background:#1d4ed8;color:white;border:none;border-radius:4px;padding:6px;font-size:11px;font-weight:700;cursor:pointer;"
                                 onmouseover="this.style.background='#1e40af'"
                                 onmouseout="this.style.background='#1d4ed8'">
@@ -695,33 +723,7 @@
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
 </tr>
 
-<tr>
-    <td class="f-col">Examined By</td>
-    @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
-        <td class="d-cell" style="background:{{ $cellBg($grade) }}">
-            @if($this->canSave($grade))
-            <input type="text" wire:model.defer="data.{{ $grade }}.examined_by_name" placeholder="—" class="hem-input" style="font-size:10px;" />
-            @else
-            <div class="hem-locked-cell">—</div>
-            @endif
-        </td>
-    @endif @endforeach
-    @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
-</tr>
 
-<tr>
-    <td class="f-col">Designation</td>
-    @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
-        <td class="d-cell" style="background:{{ $cellBg($grade) }}">
-            @if($this->canSave($grade))
-            <input type="text" wire:model.defer="data.{{ $grade }}.designation" placeholder="—" class="hem-input" style="font-size:10px;" />
-            @else
-            <div class="hem-locked-cell">—</div>
-            @endif
-        </td>
-    @endif @endforeach
-    @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
-</tr>
 
 {{-- ══ SAVE ROW ══ --}}
 <tr class="hem-save-row">
@@ -781,6 +783,7 @@
     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
     <span x-text="toastGrade + ' saved successfully'"></span>
 </div>
+</div>
 
 {{-- VALIDATION CONFIRMATION POPUP --}}
 @if ($pendingValidationGrade)
@@ -817,7 +820,7 @@
                 <svg style="width:1.5rem;height:1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
         </div>
-        
+
         <div style="max-height:60vh;overflow-y:auto;">
             @if($this->canSave($selectedGrade))
             {{-- EXAMINATION INFO --}}
@@ -975,54 +978,55 @@
                 <span style="font-size:0.75rem;font-weight:700;text-transform:uppercase;color:#c2410c;">Examination Findings</span>
             </div>
             <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.5rem;margin-bottom:1rem;">
+                @foreach ([['key' => 'skin_scalp', 'label' => 'Skin / Scalp', 'legend' => 'skin_scalp'], ['key' => 'eyes_ears_nose', 'label' => 'Eyes / Ears / Nose', 'legend' => 'eyes_ears_nose'], ['key' => 'mouth_neck_throat', 'label' => 'Mouth / Throat / Neck', 'legend' => 'mouth_neck_throat'], ['key' => 'lungs_heart', 'label' => 'Lungs / Heart', 'legend' => 'lungs_heart'], ['key' => 'abdomen', 'label' => 'Abdomen', 'legend' => 'abdomen'], ['key' => 'deformities', 'label' => 'Deformities', 'legend' => 'deformities']] as $f)
                 <div>
-                    <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;">Skin/Scalp</label>
-                    <select wire:model.defer="data.{{ $selectedGrade }}.skin_scalp" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;">
-                        <option value="">—</option>
-                        <option value="normal">Normal</option>
-                        <option value="abnormal">Abnormal</option>
-                    </select>
+                    <label style="display:block;font-size:0.7rem;font-weight:600;color:#374151;margin-bottom:4px;text-transform:uppercase;">{{ $f['label'] }}</label>
+                    @php($modalFieldKey = $f['key'])
+                    @php($modalCurrentValues = $data[$selectedGrade][$modalFieldKey] ?? [])
+                    <div class="hem-multi-wrapper"
+                         wire:key="modal-multi-{{ $selectedGrade }}-{{ $modalFieldKey }}"
+                         x-data="{
+                             id: 'modal-{{ $selectedGrade }}-{{ $modalFieldKey }}',
+                             opts: {{ json_encode(array_keys($legends[$f['legend']])) }},
+                             labels: {{ json_encode($legends[$f['legend']]) }},
+                             vals: @entangle('data.' . $selectedGrade . '.' . $modalFieldKey),
+                             get isOpen() { return openMultiSelect === this.id },
+                             toggle() { if (this.isOpen) { openMultiSelect = null; } else { openMultiSelect = this.id; this.reposition(); } },
+                             reposition() { this.$nextTick(() => { const el = this.$el.querySelector('.hem-multi-dropdown'); const trigger = this.$el.querySelector('.hem-multi-trigger'); if(!el || !trigger) return; const rect = trigger.getBoundingClientRect(); el.style.top = (rect.bottom + 4) + 'px'; el.style.left = rect.left + 'px'; }); },
+                             isSelected(v) { return (this.vals || []).includes(v) },
+                             toggleOpt(v) { if(!this.vals) this.vals = []; if(this.vals.includes(v)) { this.vals = this.vals.filter(x => x !== v); } else { this.vals.push(v); } },
+                             resetAll() { this.vals = []; }
+                         }"
+                         x-init="$watch('openMultiSelect', value => { if(value === id) reposition() })"
+                         x-on:click.outside="if(isOpen) openMultiSelect = null"
+                         x-on:scroll.window.passive="if(isOpen) reposition()">
+                        <div class="hem-multi-trigger" x-on:click.stop="toggle()">
+                            @forelse($modalCurrentValues as $val)
+                                <span class="hem-multi-chip">{{ ($legends[$f['legend']][$val] ?? $val) }}</span>
+                            @empty
+                                <span style="color:#94a3b8;font-size:9px;">Select...</span>
+                            @endforelse
+                        </div>
+                        <div x-show="isOpen" wire:ignore x-transition x-cloak class="hem-multi-dropdown" style="display:none;position:fixed;z-index:11000;min-width:200px;max-height:250px;overflow-y:auto;background:white;border:1px solid #94a3b8;border-radius:6px;box-shadow:0 8px 20px rgba(0,0,0,0.2);padding:4px;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 8px;border-bottom:1px solid #f1f5f9;margin-bottom:4px;position:sticky;top:0;background:white;z-index:10;">
+                                <span style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;">Options</span>
+                                <button x-on:click.stop="resetAll()" style="font-size:10px;color:#ef4444;background:none;border:none;cursor:pointer;font-weight:700;padding:2px 4px;border-radius:3px;" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='none'">Reset</button>
+                            </div>
+                            <div style="padding-bottom:40px;">
+                                @foreach($legends[$f['legend']] as $optVal => $optLabel)
+                                    <label style="display:flex;align-items:center;gap:8px;padding:6px 8px;cursor:pointer;font-size:11px;" x-on:mouseenter="$el.style.background='#eff6ff'" x-on:mouseleave="$el.style.background='white'">
+                                        <input type="checkbox" :checked="isSelected('{{ $optVal }}')" x-on:click.stop="toggleOpt('{{ $optVal }}')" style="width:14px;height:14px;accent-color:#1d4ed8;">
+                                        <span>{{ $optLabel }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                            <div style="position:sticky;bottom:0;background:white;padding:6px;border-top:1px solid #f1f5f9;display:flex;justify-content:center;">
+                                <button x-on:click.stop="openMultiSelect = null" style="width:100%;background:#1d4ed8;color:white;border:none;border-radius:4px;padding:6px;font-size:11px;font-weight:700;cursor:pointer;" onmouseover="this.style.background='#1e40af'" onmouseout="this.style.background='#1d4ed8'">Done</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;">Eyes/Ears/Nose</label>
-                    <select wire:model.defer="data.{{ $selectedGrade }}.eyes_ears_nose" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;">
-                        <option value="">—</option>
-                        <option value="normal">Normal</option>
-                        <option value="abnormal">Abnormal</option>
-                    </select>
-                </div>
-                <div>
-                    <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;">Mouth/Throat</label>
-                    <select wire:model.defer="data.{{ $selectedGrade }}.mouth_neck_throat" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;">
-                        <option value="">—</option>
-                        <option value="normal">Normal</option>
-                        <option value="abnormal">Abnormal</option>
-                    </select>
-                </div>
-                <div>
-                    <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;">Lungs/Heart</label>
-                    <select wire:model.defer="data.{{ $selectedGrade }}.lungs_heart" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;">
-                        <option value="">—</option>
-                        <option value="normal">Normal</option>
-                        <option value="abnormal">Abnormal</option>
-                    </select>
-                </div>
-                <div>
-                    <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;">Abdomen</label>
-                    <select wire:model.defer="data.{{ $selectedGrade }}.abdomen" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;">
-                        <option value="">—</option>
-                        <option value="normal">Normal</option>
-                        <option value="abnormal">Abnormal</option>
-                    </select>
-                </div>
-                <div>
-                    <label style="display:block;font-size:0.75rem;font-weight:500;color:#374151;">Deformities</label>
-                    <select wire:model.defer="data.{{ $selectedGrade }}.deformities" style="width:100%;padding:0.375rem;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.75rem;">
-                        <option value="">—</option>
-                        <option value="none">None</option>
-                        <option value="present">Present</option>
-                    </select>
-                </div>
+                @endforeach
             </div>
 
             <div>
@@ -1034,36 +1038,38 @@
 
         <div style="display:flex;gap:0.75rem;margin-top:1.5rem;padding-top:1rem;border-top:1px solid #e5e7eb;">
             @if (($data[$selectedGrade]['validated'] ?? false) && !($data[$selectedGrade]['reverted_at'] ?? null) && !$this->isAdmin())
-            <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.5rem;background:#fef3c7;border:1px solid #fcd34d;border-radius:0.5rem;color:#92400e;font-size:0.875rem;font-weight:600;">
-                <svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
-                Locked - Contact Admin to Edit
-            </div>
+                <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.5rem;background:#fef3c7;border:1px solid #fcd34d;border-radius:0.5rem;color:#92400e;font-size:0.875rem;font-weight:600;">
+                    <svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
+                    Locked - Contact Admin to Edit
+                </div>
             @else
-            <button 
-                wire:click="performSaveByGrade('{{ $selectedGrade }}')" 
-                style="flex:1;background:#2563eb;color:white;padding:0.5rem 1rem;border-radius:0.5rem;font-weight:500;font-size:0.875rem;cursor:pointer;border:none;"
-            >
-                Save
-            </button>
+                <button
+                    wire:click="performSaveByGrade('{{ $selectedGrade }}')"
+                    style="flex:1;background:#2563eb;color:white;padding:0.5rem 1rem;border-radius:0.5rem;font-weight:500;font-size:0.875rem;cursor:pointer;border:none;"
+                >
+                    Save
+                </button>
             @endif
-            @if ($this->isAdmin())
+
+            @if($this->isAdmin())
                 @if (($data[$selectedGrade]['validated'] ?? false) && !($data[$selectedGrade]['reverted_at'] ?? null))
-                <button wire:click="setGradeForInvalidate('{{ $selectedGrade }}')" style="background:#f59e0b;color:white;padding:0.5rem 1rem;border-radius:0.5rem;font-weight:500;font-size:0.875rem;cursor:pointer;border:none;">
-                    Invalidate
-                </button>
+                    <button wire:click="setGradeForInvalidate('{{ $selectedGrade }}')" style="background:#f59e0b;color:white;padding:0.5rem 1rem;border-radius:0.5rem;font-weight:500;font-size:0.875rem;cursor:pointer;border:none;">
+                        Invalidate
+                    </button>
                 @elseif (!($data[$selectedGrade]['validated'] ?? false))
-                <button wire:click="setGradeForValidate('{{ $selectedGrade }}')" style="background:#16a34a;color:white;padding:0.5rem 1rem;border-radius:0.5rem;font-weight:500;font-size:0.875rem;cursor:pointer;border:none;">
-                    Validate
-                </button>
+                    <button wire:click="setGradeForValidate('{{ $selectedGrade }}')" style="background:#16a34a;color:white;padding:0.5rem 1rem;border-radius:0.5rem;font-weight:500;font-size:0.875rem;cursor:pointer;border:none;">
+                        Validate
+                    </button>
                 @endif
             @else
                 @if (!($data[$selectedGrade]['validated'] ?? false))
-                <button wire:click="setGradeForValidate('{{ $selectedGrade }}')" style="background:#16a34a;color:white;padding:0.5rem 1rem;border-radius:0.5rem;font-weight:500;font-size:0.875rem;cursor:pointer;border:none;">
-                    Validate
-                </button>
+                    <button wire:click="setGradeForValidate('{{ $selectedGrade }}')" style="background:#16a34a;color:white;padding:0.5rem 1rem;border-radius:0.5rem;font-weight:500;font-size:0.875rem;cursor:pointer;border:none;">
+                        Validate
+                    </button>
                 @endif
             @endif
         </div>
     </div>
 </div>
 @endif
+

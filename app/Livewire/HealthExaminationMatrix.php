@@ -357,6 +357,29 @@ class HealthExaminationMatrix extends Component
         $this->showAll = ! $this->showAll;
     }
 
+    public function toggleFinding(string $grade, string $field, string $value): void
+    {
+        if (! $this->canSave($grade)) {
+            return;
+        }
+
+        $current = $this->data[$grade][$field] ?? [];
+        if (is_string($current)) {
+            $current = array_filter(array_map('trim', explode(',', $current)));
+        }
+        if (! is_array($current)) {
+            $current = [];
+        }
+
+        if (in_array($value, $current)) {
+            $current = array_filter($current, fn ($v) => $v !== $value);
+        } else {
+            $current[] = $value;
+        }
+
+        $this->data[$grade][$field] = array_values($current);
+    }
+
     public function isVisible(string $grade): bool
     {
         if ($this->showAll || ! $this->studentGradeLevel) {

@@ -821,6 +821,13 @@
             </button>
         </div>
 
+        @if ($lastSavedGrade === $selectedGrade)
+        <div style="background:#dcfce7;border:1px solid #22c55e;border-radius:0.5rem;padding:0.75rem;margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;color:#15803d;font-size:0.875rem;font-weight:600;">
+            <svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            Saved successfully!
+        </div>
+        @endif
+
         <div style="max-height:60vh;overflow-y:auto;">
             @if($this->canSave($selectedGrade))
             {{-- EXAMINATION INFO --}}
@@ -987,25 +994,21 @@
                          wire:key="modal-multi-{{ $selectedGrade }}-{{ $modalFieldKey }}"
                          x-data="{
                              id: 'modal-{{ $selectedGrade }}-{{ $modalFieldKey }}',
-                             opts: {{ json_encode(array_keys($legends[$f['legend']])) }},
-                             labels: {{ json_encode($legends[$f['legend']]) }},
                              vals: @entangle('data.' . $selectedGrade . '.' . $modalFieldKey),
+                             labels: {{ json_encode($legends[$f['legend']]) }},
                              get isOpen() { return openMultiSelect === this.id },
                              toggle() { if (this.isOpen) { openMultiSelect = null; } else { openMultiSelect = this.id; this.reposition(); } },
                              reposition() { this.$nextTick(() => { const el = this.$el.querySelector('.hem-multi-dropdown'); const trigger = this.$el.querySelector('.hem-multi-trigger'); if(!el || !trigger) return; const rect = trigger.getBoundingClientRect(); el.style.top = (rect.bottom + 4) + 'px'; el.style.left = rect.left + 'px'; }); },
-                             isSelected(v) { return (this.vals || []).includes(v) },
-                             toggleOpt(v) { if(!this.vals) this.vals = []; if(this.vals.includes(v)) { this.vals = this.vals.filter(x => x !== v); } else { this.vals.push(v); } },
-                             resetAll() { this.vals = []; }
+                             resetAll() { this.vals = []; this.$wire.set('data.{{ $selectedGrade }}.{{ $modalFieldKey }}', []); }
                          }"
                          x-init="$watch('openMultiSelect', value => { if(value === id) reposition() })"
                          x-on:click.outside="if(isOpen) openMultiSelect = null"
                          x-on:scroll.window.passive="if(isOpen) reposition()">
                         <div class="hem-multi-trigger" x-on:click.stop="toggle()">
-                            @forelse($modalCurrentValues as $val)
-                                <span class="hem-multi-chip">{{ ($legends[$f['legend']][$val] ?? $val) }}</span>
-                            @empty
-                                <span style="color:#94a3b8;font-size:9px;">Select...</span>
-                            @endforelse
+                            <template x-for="val in (vals || [])" :key="val">
+                                <span class="hem-multi-chip" x-text="labels[val] || val"></span>
+                            </template>
+                            <span x-show="!(vals || []).length" style="color:#94a3b8;font-size:9px;">Select...</span>
                         </div>
                         <div x-show="isOpen" wire:ignore x-transition x-cloak class="hem-multi-dropdown" style="display:none;position:fixed;z-index:11000;min-width:200px;max-height:250px;overflow-y:auto;background:white;border:1px solid #94a3b8;border-radius:6px;box-shadow:0 8px 20px rgba(0,0,0,0.2);padding:4px;">
                             <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 8px;border-bottom:1px solid #f1f5f9;margin-bottom:4px;position:sticky;top:0;background:white;z-index:10;">
@@ -1015,7 +1018,10 @@
                             <div style="padding-bottom:40px;">
                                 @foreach($legends[$f['legend']] as $optVal => $optLabel)
                                     <label style="display:flex;align-items:center;gap:8px;padding:6px 8px;cursor:pointer;font-size:11px;" x-on:mouseenter="$el.style.background='#eff6ff'" x-on:mouseleave="$el.style.background='white'">
-                                        <input type="checkbox" :checked="isSelected('{{ $optVal }}')" x-on:click.stop="toggleOpt('{{ $optVal }}')" style="width:14px;height:14px;accent-color:#1d4ed8;">
+                                        <input type="checkbox" 
+                                               :checked="(vals || []).includes('{{ $optVal }}')" 
+                                               x-on:change="if($event.target.checked) { vals.push('{{ $optVal }}'); } else { vals = vals.filter(x => x !== '{{ $optVal }}'); } $wire.set('data.{{ $selectedGrade }}.{{ $modalFieldKey }}', vals)"
+                                               style="width:14px;height:14px;accent-color:#1d4ed8;">
                                         <span>{{ $optLabel }}</span>
                                     </label>
                                 @endforeach
@@ -1045,9 +1051,12 @@
             @else
                 <button
                     wire:click="performSaveByGrade('{{ $selectedGrade }}')"
+                    wire:loading.attr="disabled"
+                    wire:target="performSaveByGrade"
                     style="flex:1;background:#2563eb;color:white;padding:0.5rem 1rem;border-radius:0.5rem;font-weight:500;font-size:0.875rem;cursor:pointer;border:none;"
                 >
-                    Save
+                    <span wire:loading.remove wire:target="performSaveByGrade">Save</span>
+                    <span wire:loading wire:target="performSaveByGrade">Saving...</span>
                 </button>
             @endif
 

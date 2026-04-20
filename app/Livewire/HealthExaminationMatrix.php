@@ -31,6 +31,9 @@ class HealthExaminationMatrix extends Component
     // Validation confirmation
     public ?string $pendingValidationGrade = null;
 
+    // Track last saved grade for showing inline notification
+    public ?string $lastSavedGrade = null;
+
     // Persist the open dropdown ID across re-renders
     public ?string $openMultiSelect = null;
 
@@ -123,6 +126,7 @@ class HealthExaminationMatrix extends Component
     {
         $this->isModalOpen = false;
         $this->selectedGrade = null;
+        $this->lastSavedGrade = null;
     }
 
     public function performSaveByGrade(string $grade): void
@@ -350,6 +354,7 @@ class HealthExaminationMatrix extends Component
         $this->data[$grade]['id'] = $record->id;
 
         $this->dispatch('hem-saved', grade: $grade);
+        $this->lastSavedGrade = $grade;
     }
 
     public function toggleShowAll(): void

@@ -14,7 +14,33 @@
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
 
         <!-- Scripts & Styles -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ['Instrument Sans', 'ui-sans-serif', 'system-ui', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'],
+                        },
+                        animation: {
+                            blob: 'blob 7s infinite',
+                        },
+                        keyframes: {
+                            blob: {
+                                '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+                                '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                                '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            },
+                        },
+                    }
+                }
+            }
+        </script>
+        <link rel="stylesheet" href="{{ asset('css/flux.css') }}">
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@@3.x.x/dist/cdn.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@@livewire/flux@@1.x.x/dist/flux.min.js" defer></script>
     </head>
     <body class="h-full bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased">
         <div class="relative min-h-screen flex flex-col">
@@ -81,7 +107,7 @@
                             <div class="absolute top-0 -left-4 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob dark:bg-blue-900"></div>
                             <div class="absolute top-0 -right-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000 dark:bg-purple-900"></div>
                             <div class="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000 dark:bg-pink-900"></div>
-                            <div class="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl p-8 border border-slate-200 dark:border-slate-800">
+                            <div class="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl p-8 border border-slate-200 dark:border-slate-800 opacity-80">
                                 <div class="flex items-center gap-4 mb-6">
                                     <div class="size-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-400">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

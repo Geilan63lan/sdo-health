@@ -6,17 +6,23 @@ namespace App\Models;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
+use Spatie\Permission\Traits\HasPermissions;
+use App\Models\School;
+use App\Models\HealthRecord;
+use App\Models\Vaccination;
+use App\Models\Absence;
+use App\Models\HealthProgram;
 
 class User extends Authenticatable implements FilamentUser
 {
-    use HasFactory, HasRoles, Notifiable, TwoFactorAuthenticatable;
+    use HasFactory, HasRoles, HasPermissions, Notifiable, TwoFactorAuthenticatable;
 
     protected $fillable = [
         'name',
@@ -34,19 +40,23 @@ class User extends Authenticatable implements FilamentUser
         'remember_token',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'is_approved' => 'boolean',
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'is_approved' => 'boolean',
+    ];
 
     public function school(): BelongsTo
     {
         return $this->belongsTo(School::class);
     }
+
+    // TODO: HealthRecord was replaced by HealthExamination
+    // Kept for reference - commented out to prevent errors
+    // public function healthRecords(): HasMany
+    // {
+    //     return $this->hasMany(HealthRecord::class, 'recorded_by');
+    // }
 
     public function vaccinations(): HasMany
     {
@@ -75,24 +85,13 @@ class User extends Authenticatable implements FilamentUser
             ->implode('');
     }
 
-    /**
-     * Determine if the user can access the Filament panel.
-     */
     public function canAccessPanel(Panel $panel): bool
     {
-        // Only allow users with specific roles to access the admin panel
-        if ($panel->getId() === 'admin') {
-            // Check if user is verified
-            if ($this->email_verified_at === null) {
-                return false;
-            }
+        return $this->is_approved && $this->email_verified_at;
+    }
 
-            // Roles allowed to access the panel (Approved or not, handled by middleware)
-            return $this->hasRole('sdo_admin')
-                || $this->hasRole('health_coordinator')
-                || $this->hasRole('principal');
-        }
-
-        return true;
+    public function canViewPanel(Panel $panel): bool
+    {
+        return $this->hasRole(['sdo_admin', 'health_coordinator', 'principal']);
     }
 }

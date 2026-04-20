@@ -2,14 +2,14 @@
 
 namespace Database\Seeders;
 
-use App\Models\Absence;
-use App\Models\HealthExamination;
-use App\Models\HealthProgram;
-use App\Models\MedicalHistory;
+use App\Models\User;
 use App\Models\School;
 use App\Models\Student;
-use App\Models\User;
+// TODO: HealthRecord was replaced by HealthExamination
+// use App\Models\HealthRecord;
+use App\Models\HealthProgram;
 use App\Models\Vaccination;
+use App\Models\Absence;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -17,87 +17,74 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Core Configuration & Base Data
-        $this->call([
-            RolePermissionSeeder::class,
-            SchoolSeeder::class,
-            SchoolCategorySeeder::class, // Ensures all schools have valid categories
-        ]);
+        // 0. Create Roles and Permissions
+        $this->call(RolePermissionSeeder::class);
+
+        // 1. Seed all schools first
+        $this->call(SchoolSeeder::class);
 
         $filipinoLastNames = ['Garcia', 'Santos', 'Reyes', 'Cruz', 'Bautista', 'Ocampo', 'Dela Cruz', 'Mendoza', 'Pascual', 'Castillo', 'Villanueva', 'Gonzales', 'Rivera', 'Aquino', 'Santiago'];
         $filipinoFirstNames = ['Jose', 'Maria', 'Juan', 'Angelo', 'Liza', 'Rene', 'Teresa', 'Antonio', 'Cristina', 'Ricardo', 'Elena', 'Roberto', 'Carmen', 'Francisco', 'Pilar'];
 
-        // 2. Create SDO Admin (using updateOrCreate to avoid duplicate errors)
-        $admin = User::updateOrCreate(
-            ['email' => 'admin@sdo.gov.ph'],
-            [
-                'name' => 'SDO Admin',
-                'password' => Hash::make('password'),
-                'role' => 'sdo_admin',
-                'is_approved' => true,
-                'email_verified_at' => now(),
-            ]
-        );
+        // 2. Create SDO Admin
+        $sdoAdmin = User::factory()->create([
+            'name' => 'SDO Admin',
+            'email' => 'admin@sdo.gov.ph',
+            'password' => Hash::make('password'),
+            'role' => 'sdo_admin',
+            'is_approved' => true,
+            'email_verified_at' => now(),
+        ]);
+        $sdoAdmin->assignRole('sdo_admin');
 
-        if (! $admin->hasRole('sdo_admin')) {
-            $admin->assignRole('sdo_admin');
-        }
-
-        // 3. Get all schools created by SchoolSeeder
+        // 3. Get all schools from the seeder
         $schools = School::all();
-
-        // Inform the console for better tracking
-        $this->command->info("Seeding data for {$schools->count()} schools...");
 
         foreach ($schools as $school) {
             // Create Principal for the school
             $principal = User::factory()->create([
-                'name' => 'Principal '.fake()->randomElement($filipinoFirstNames).' '.fake()->randomElement($filipinoLastNames),
-                'email' => "principal.{$school->school_id}@sdo.gov.ph",
+                'name' => "Principal " . fake()->randomElement($filipinoFirstNames) . " " . fake()->randomElement($filipinoLastNames),
+                'email' => "principal." . $school->id . "@example.com",
                 'role' => 'principal',
                 'school_id' => $school->id,
                 'is_approved' => true,
             ]);
             $principal->assignRole('principal');
 
-            // Create Health Coordinator (Nurse) for the school
+            // Create Health Coordinator for the school
             $coordinator = User::factory()->create([
-                'name' => 'Nurse '.fake()->randomElement($filipinoFirstNames).' '.fake()->randomElement($filipinoLastNames),
-                'email' => "nurse.{$school->school_id}@sdo.gov.ph",
+                'name' => "Nurse " . fake()->randomElement($filipinoFirstNames) . " " . fake()->randomElement($filipinoLastNames),
+                'email' => "nurse." . $school->id . "@example.com",
                 'role' => 'health_coordinator',
                 'school_id' => $school->id,
                 'is_approved' => true,
             ]);
             $coordinator->assignRole('health_coordinator');
 
-            // 4. Create Students (reduced count to 10 for faster seeding, adjust as needed)
-            Student::factory(10)->create([
+            // 3. Create Students and their records
+            Student::factory(20)->create([
                 'school_id' => $school->id,
-                'first_name' => fn () => fake()->randomElement($filipinoFirstNames),
-                'last_name' => fn () => fake()->randomElement($filipinoLastNames),
-                'guardian_name' => fn () => fake()->randomElement($filipinoFirstNames).' '.fake()->randomElement($filipinoLastNames),
+                'first_name' => fn() => fake()->randomElement($filipinoFirstNames),
+                'last_name' => fn() => fake()->randomElement($filipinoLastNames),
+                'guardian_name' => fn() => fake()->randomElement($filipinoFirstNames) . " " . fake()->randomElement($filipinoLastNames),
             ])->each(function ($student) use ($coordinator) {
-
-                // Create Medical History
-                MedicalHistory::factory()->create([
-                    'student_id' => $student->id,
-                ]);
-
-                // Add Health Examinations
-                HealthExamination::factory(rand(1, 2))->create([
-                    'student_id' => $student->id,
-                    'examined_by' => $coordinator->id,
-                ]);
+                // TODO: HealthRecord was replaced by HealthExamination
+                // Kept for reference - commented out to prevent errors
+                // // Add Health Records
+                // HealthRecord::factory(rand(1, 3))->create([
+                //     'student_id' => $student->id,
+                //     'recorded_by' => $coordinator->id,
+                // ]);
 
                 // Add Vaccinations
-                Vaccination::factory(rand(1, 3))->create([
+                Vaccination::factory(rand(1, 4))->create([
                     'student_id' => $student->id,
                     'recorded_by' => $coordinator->id,
                     'vaccine_name' => fake()->randomElement(['BCG', 'Hepatitis B', 'DTP', 'Polio', 'MMR', 'COVID-19']),
                     'date_given' => fake()->dateTimeBetween('-2 years', 'now'),
                 ]);
 
-                // Add Absences (30% chance)
+                // Add some Absences
                 if (rand(1, 10) > 7) {
                     Absence::factory(rand(1, 2))->create([
                         'student_id' => $student->id,
@@ -108,15 +95,13 @@ class DatabaseSeeder extends Seeder
                 }
             });
 
-            // 5. Create Health Programs for the school
-            HealthProgram::factory(2)->create([
+            // 4. Create Health Programs for the school
+            HealthProgram::factory(3)->create([
                 'school_id' => $school->id,
                 'coordinator_id' => $coordinator->id,
-                'status' => fake()->randomElement(['planned', 'ongoing', 'completed']),
-                'type' => fake()->randomElement(['screening', 'vaccination', 'education']),
+                'status' => fake()->randomElement(['planned', 'ongoing', 'completed', 'cancelled']),
+                'type' => fake()->randomElement(['screening', 'vaccination', 'education', 'counseling', 'other']),
             ]);
         }
-
-        $this->command->info('Database seeding completed successfully for Legazpi SDO Health!');
     }
 }

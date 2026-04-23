@@ -335,11 +335,7 @@
     <td class="f-col">Examined By</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
-            @if($this->canSave($grade))
-                <input type="text" wire:model.defer="data.{{ $grade }}.examined_by_name" placeholder="—" class="hem-input" style="font-size:10px;" />
-            @else
-                <div class="hem-locked-cell">—</div>
-            @endif
+            <div class="hem-locked-cell">{{ $data[$grade]['examined_by_name'] ?: '—' }}</div>
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -349,11 +345,7 @@
     <td class="f-col">Designation</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
-            @if($this->canSave($grade))
-                <input type="text" wire:model.defer="data.{{ $grade }}.designation" placeholder="—" class="hem-input" style="font-size:10px;" />
-            @else
-                <div class="hem-locked-cell">—</div>
-            @endif
+            <div class="hem-locked-cell">{{ $data[$grade]['designation'] ?: '—' }}</div>
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -363,11 +355,7 @@
     <td class="f-col">Date of Examination</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
-            @if($this->canSave($grade))
-            <input type="date" wire:model.defer="data.{{ $grade }}.date_of_examination" class="hem-input" />
-            @else
-            <div class="hem-locked-cell">—</div>
-            @endif
+            <div class="hem-locked-cell">{{ $data[$grade]['date_of_examination'] ?: '—' }}</div>
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -377,11 +365,7 @@
     <td class="f-col">Height (in cm)</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
-            @if($this->canSave($grade))
-            <input type="number" step="0.01" min="0" placeholder="—" wire:model.defer="data.{{ $grade }}.height_cm" class="hem-input" />
-            @else
-            <div class="hem-locked-cell">—</div>
-            @endif
+            <div class="hem-locked-cell">{{ $data[$grade]['height_cm'] ?: '—' }}</div>
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -391,11 +375,7 @@
     <td class="f-col">Weight (in kg)</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
-            @if($this->canSave($grade))
-            <input type="number" step="0.01" min="0" placeholder="—" wire:model.defer="data.{{ $grade }}.weight_kg" class="hem-input" />
-            @else
-            <div class="hem-locked-cell">—</div>
-            @endif
+            <div class="hem-locked-cell">{{ $data[$grade]['weight_kg'] ?: '—' }}</div>
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -405,13 +385,7 @@
     <td class="f-col">NS (BMI/Wt-for-Age)</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
-            @if($this->canSave($grade))
-            <select wire:model.defer="data.{{ $grade }}.ns_bmi_for_age" class="hem-select">
-                @foreach ($legends['ns_bmi'] as $v => $l)<option value="{{ $v }}">{{ $l }}</option>@endforeach
-            </select>
-            @else
-            <div class="hem-locked-cell">—</div>
-            @endif
+            <div class="hem-locked-cell">{{ $legends['ns_bmi'][$data[$grade]['ns_bmi_for_age']] ?? ($data[$grade]['ns_bmi_for_age'] ?: '—') }}</div>
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -421,13 +395,7 @@
     <td class="f-col">NS (Height-for-Age)</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
-            @if($this->canSave($grade))
-            <select wire:model.defer="data.{{ $grade }}.ns_height_for_age" class="hem-select">
-                @foreach ($legends['ns_height'] as $v => $l)<option value="{{ $v }}">{{ $l }}</option>@endforeach
-            </select>
-            @else
-            <div class="hem-locked-cell">—</div>
-            @endif
+            <div class="hem-locked-cell">{{ $legends['ns_height'][$data[$grade]['ns_height_for_age']] ?? ($data[$grade]['ns_height_for_age'] ?: '—') }}</div>
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -440,11 +408,7 @@
     <td class="f-col">4Ps Beneficiary (√ or X)</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
-            @if($this->canSave($grade))
-            <input type="checkbox" wire:model.defer="data.{{ $grade }}.is_4ps_beneficiary" class="hem-cb" />
-            @else
-            <div class="hem-locked-cell">—</div>
-            @endif
+            <div class="hem-locked-cell">{{ $data[$grade]['is_4ps_beneficiary'] ? '✓' : '—' }}</div>
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -454,11 +418,7 @@
     <td class="f-col">SBFP Beneficiary (√ or X)</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
-            @if($this->canSave($grade))
-            <input type="checkbox" wire:model.defer="data.{{ $grade }}.is_sbfp_beneficiary" class="hem-cb" />
-            @else
-            <div class="hem-locked-cell">—</div>
-            @endif
+            <div class="hem-locked-cell">{{ $data[$grade]['is_sbfp_beneficiary'] ? '✓' : '—' }}</div>
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -469,20 +429,16 @@
     <td class="f-col">Deworming (√ or X)</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="padding:0; background:{{ $cellBg($grade) }}">
-            @if($this->canSave($grade))
             <div class="hem-split">
                 <div class="hem-half">
                     <span class="hem-sub-lbl amber">Jul</span>
-                    <input type="checkbox" wire:model.defer="data.{{ $grade }}.deworming_july" class="hem-cb" />
+                    <span style="font-size:11px;color:#374151;">{{ $data[$grade]['deworming_july'] ? '✓' : '—' }}</span>
                 </div>
                 <div class="hem-half">
                     <span class="hem-sub-lbl amber">Jan</span>
-                    <input type="checkbox" wire:model.defer="data.{{ $grade }}.deworming_january" class="hem-cb" />
+                    <span style="font-size:11px;color:#374151;">{{ $data[$grade]['deworming_january'] ? '✓' : '—' }}</span>
                 </div>
             </div>
-            @else
-            <div class="hem-locked-cell">—</div>
-            @endif
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -492,11 +448,7 @@
     <td class="f-col">Iron Supplementation (√ or X)</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
-            @if($this->canSave($grade))
-            <input type="checkbox" wire:model.defer="data.{{ $grade }}.iron_supplementation" class="hem-cb" />
-            @else
-            <div class="hem-locked-cell">—</div>
-            @endif
+            <div class="hem-locked-cell">{{ $data[$grade]['iron_supplementation'] ? '✓' : '—' }}</div>
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -506,11 +458,7 @@
     <td class="f-col">Immunization (Specify)</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
-            @if($this->canSave($grade))
-            <input type="text" wire:model.defer="data.{{ $grade }}.immunization_kind" placeholder="—" class="hem-input" />
-            @else
-            <div class="hem-locked-cell">—</div>
-            @endif
+            <div class="hem-locked-cell">{{ $data[$grade]['immunization_kind'] ?: '—' }}</div>
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -530,11 +478,7 @@
     <td class="f-col">{{ $f['label'] }}</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
-            @if($this->canSave($grade))
-            <input type="text" wire:model.defer="data.{{ $grade }}.{{ $f['key'] }}" placeholder="—" class="hem-input" />
-            @else
-            <div class="hem-locked-cell">—</div>
-            @endif
+            <div class="hem-locked-cell">{{ $data[$grade][$f['key']] ?: '—' }}</div>
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -548,24 +492,16 @@
     <td class="f-col">Vision Screening</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="padding:0; background:{{ $cellBg($grade) }}">
-            @if($this->canSave($grade))
             <div class="hem-split">
                 <div class="hem-half">
                     <span class="hem-sub-lbl teal">L</span>
-                    <select wire:model.defer="data.{{ $grade }}.vision_l" class="hem-select" style="font-size:10px;">
-                        @foreach ($legends['screenings'] as $v => $l)<option value="{{ $v }}">{{ $l }}</option>@endforeach
-                    </select>
+                    <span style="font-size:10px;color:#374151;">{{ $legends['screenings'][$data[$grade]['vision_l']] ?? ($data[$grade]['vision_l'] ?: '—') }}</span>
                 </div>
                 <div class="hem-half">
                     <span class="hem-sub-lbl teal">R</span>
-                    <select wire:model.defer="data.{{ $grade }}.vision_r" class="hem-select" style="font-size:10px;">
-                        @foreach ($legends['screenings'] as $v => $l)<option value="{{ $v }}">{{ $l }}</option>@endforeach
-                    </select>
+                    <span style="font-size:10px;color:#374151;">{{ $legends['screenings'][$data[$grade]['vision_r']] ?? ($data[$grade]['vision_r'] ?: '—') }}</span>
                 </div>
             </div>
-            @else
-            <div class="hem-locked-cell">—</div>
-            @endif
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -575,24 +511,16 @@
     <td class="f-col">Auditory Screening</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="padding:0; background:{{ $cellBg($grade) }}">
-            @if($this->canSave($grade))
             <div class="hem-split">
                 <div class="hem-half">
                     <span class="hem-sub-lbl teal">L</span>
-                    <select wire:model.defer="data.{{ $grade }}.auditory_l" class="hem-select" style="font-size:10px;">
-                        @foreach ($legends['screenings'] as $v => $l)<option value="{{ $v }}">{{ $l }}</option>@endforeach
-                    </select>
+                    <span style="font-size:10px;color:#374151;">{{ $legends['screenings'][$data[$grade]['auditory_l']] ?? ($data[$grade]['auditory_l'] ?: '—') }}</span>
                 </div>
                 <div class="hem-half">
                     <span class="hem-sub-lbl teal">R</span>
-                    <select wire:model.defer="data.{{ $grade }}.auditory_r" class="hem-select" style="font-size:10px;">
-                        @foreach ($legends['screenings'] as $v => $l)<option value="{{ $v }}">{{ $l }}</option>@endforeach
-                    </select>
+                    <span style="font-size:10px;color:#374151;">{{ $legends['screenings'][$data[$grade]['auditory_r']] ?? ($data[$grade]['auditory_r'] ?: '—') }}</span>
                 </div>
             </div>
-            @else
-            <div class="hem-locked-cell">—</div>
-            @endif
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -613,93 +541,15 @@
     <td class="f-col">{{ $f['label'] }}</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}; padding: 2px;">
-            @if($this->canSave($grade))
             @php($fieldKey = $f['key'])
             @php($currentValues = $data[$grade][$fieldKey] ?? [])
-            <div class="hem-multi-wrapper"
-                 wire:key="multi-{{ $grade }}-{{ $fieldKey }}"
-                 x-data="{
-                     id: '{{ $grade }}-{{ $fieldKey }}',
-                     opts: @js(array_keys($legends[$f['legend']])),
-                     labels: @js($legends[$f['legend']]),
-                     vals: @js($currentValues),
-                     get isOpen() { return openMultiSelect === this.id },
-                     toggle() {
-                         if (this.isOpen) {
-                             openMultiSelect = null;
-                         } else {
-                             openMultiSelect = this.id;
-                             this.reposition();
-                         }
-                     },
-                     reposition() {
-                         this.$nextTick(() => {
-                            const el = this.$el.querySelector('.hem-multi-dropdown');
-                            const trigger = this.$el.querySelector('.hem-multi-trigger');
-                            if(!el || !trigger) return;
-                            const rect = trigger.getBoundingClientRect();
-                            el.style.top = (rect.bottom + 4) + 'px';
-                            el.style.left = rect.left + 'px';
-                         });
-                     },
-                     isSelected(v) { return this.vals.includes(v) },
-                     toggleOpt(v) {
-                         if(this.vals.includes(v)) {
-                             this.vals = this.vals.filter(x => x !== v);
-                         } else {
-                             this.vals.push(v);
-                         }
-                         $wire.set('data.{{ $grade }}.{{ $fieldKey }}', this.vals);
-                     },
-                     resetAll() {
-                         this.vals = [];
-                         $wire.set('data.{{ $grade }}.{{ $fieldKey }}', []);
-                     }
-                 }"
-                 x-init="$watch('openMultiSelect', value => { if(value === id) reposition() })"
-                 @click.outside="if(isOpen) openMultiSelect = null"
-                 x-on:scroll.window.passive="if(isOpen) reposition()"
-                 @scroll-matrix.window="if(isOpen) reposition()">
-                <div class="hem-multi-trigger" @click.stop="toggle()">
-                    @forelse($currentValues as $val)
-                        <span class="hem-multi-chip">{{ $legends[$f['legend']][$val] ?? $val }}</span>
-                    @empty
-                        <span style="color:#94a3b8;font-size:9px;">Select...</span>
-                    @endforelse
-                </div>
-                <div x-show="isOpen" wire:ignore x-transition x-cloak class="hem-multi-dropdown" style="display:none;position:fixed;z-index:11000;min-width:200px;max-height:250px;overflow-y:auto;background:white;border:1px solid #94a3b8;border-radius:6px;box-shadow:0 8px 20px rgba(0,0,0,0.2);padding:4px;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 8px;border-bottom:1px solid #f1f5f9;margin-bottom:4px;position:sticky;top:0;background:white;z-index:10;">
-                        <span style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;">Options</span>
-                        <button @click.stop="resetAll()" style="font-size:10px;color:#ef4444;background:none;border:none;cursor:pointer;font-weight:700;padding:2px 4px;border-radius:3px;" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='none'">Reset</button>
-                    </div>
-
-                    <div style="padding-bottom:40px;"> {{-- extra padding for sticky footer --}}
-                        @foreach($legends[$f['key']] as $optVal => $optLabel)
-                            <label style="display:flex;align-items:center;gap:8px;padding:6px 8px;cursor:pointer;font-size:11px;"
-                                   @mouseenter="$el.style.background='#eff6ff'"
-                                   @mouseleave="$el.style.background='white'">
-                                <input type="checkbox"
-                                       {{ in_array($optVal, $currentValues) ? 'checked' : '' }}
-                                       @click.stop="toggleOpt('{{ $optVal }}')"
-                                       style="width:14px;height:14px;accent-color:#1d4ed8;">
-                                <span>{{ $optLabel }}</span>
-                            </label>
-                        @endforeach
-                    </div>
-
-                    <div style="position:sticky;bottom:0;background:white;padding:6px;border-top:1px solid #f1f5f9;display:flex;justify-content:center;">
-                        <button @click.stop="openMultiSelect = null"
-                                style="width:100%;background:#1d4ed8;color:white;border:none;border-radius:4px;padding:6px;font-size:11px;font-weight:700;cursor:pointer;"
-                                onmouseover="this.style.background='#1e40af'"
-                                onmouseout="this.style.background='#1d4ed8'">
-                            Done
-                        </button>
-                    </div>
-                </div>
+            <div style="display:flex;flex-wrap:wrap;gap:2px;justify-content:center;min-height:26px;padding:2px 4px;">
+                @forelse($currentValues as $val)
+                    <span class="hem-multi-chip">{{ $legends[$f['legend']][$val] ?? $val }}</span>
+                @empty
+                    <span style="color:#94a3b8;font-size:9px;">—</span>
+                @endforelse
             </div>
-            @else
-            <div class="hem-locked-cell">—</div>
-            @endif
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -713,11 +563,7 @@
     <td class="f-col">Others, specify</td>
     @foreach ($gradeLevels as $grade) @if ($this->isVisible($grade))
         <td class="d-cell" style="background:{{ $cellBg($grade) }}">
-            @if($this->canSave($grade))
-            <input type="text" wire:model.defer="data.{{ $grade }}.others_specify" placeholder="—" class="hem-input" />
-            @else
-            <div class="hem-locked-cell">—</div>
-            @endif
+            <div class="hem-locked-cell">{{ $data[$grade]['others_specify'] ?: '—' }}</div>
         </td>
     @endif @endforeach
     @if (!$showAll && $hiddenCount > 0)<td class="d-cell locked"></td>@endif
@@ -725,28 +571,18 @@
 
 
 
-{{-- ══ SAVE ROW ══ --}}
+{{-- ══ ACTION ROW — Click to open modal ══ --}}
 <tr class="hem-save-row">
     <td class="f-col">Action</td>
     @foreach ($gradeLevels as $grade)
         @if ($this->isVisible($grade))
         <td style="padding:4px 4px; background:#f8fafc; border-right:1px solid #f1f5f9;">
             <div style="display:flex;flex-direction:column;gap:4px;">
-                @if (!$this->canSave($grade))
-                <div style="display:flex;align-items:center;justify-content:center;gap:4px;padding:5px 8px;background:#fef3c7;border:1px solid #fcd34d;border-radius:6px;color:#92400e;font-size:11px;font-weight:600;">
-                    <svg style="width:11px;height:11px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
-                    Locked
-                </div>
-                @else
                 <button
-                    wire:click="performSave({{ $loop->index }})"
-                    wire:loading.attr="disabled"
-                    wire:target="performSave({{ $loop->index }})"
+                    wire:click="openModal('{{ $grade }}')"
                     class="hem-save-btn">
-                    <span wire:loading.remove wire:target="performSave({{ $loop->index }})">Save</span>
-                    <span wire:loading wire:target="performSave({{ $loop->index }})">Saving...</span>
+                    Edit
                 </button>
-                @endif
 
                 @if ($this->isAdmin())
                     @if (($data[$grade]['validated'] ?? false) && !($data[$grade]['reverted_at'] ?? null))
@@ -829,7 +665,7 @@
         @endif
 
         <div style="max-height:60vh;overflow-y:auto;">
-            @if($this->canSave($selectedGrade))
+            @if($this->canEdit($selectedGrade) || $this->isAdmin())
             {{-- EXAMINATION INFO --}}
             <div style="background:#f8fafc;padding:0.5rem;border-radius:0.25rem;margin-bottom:1rem;">
                 <span style="font-size:0.75rem;font-weight:700;text-transform:uppercase;color:#64748b;">Examination Info</span>
@@ -1043,7 +879,7 @@
         </div>
 
         <div style="display:flex;gap:0.75rem;margin-top:1.5rem;padding-top:1rem;border-top:1px solid #e5e7eb;">
-            @if (($data[$selectedGrade]['validated'] ?? false) && !($data[$selectedGrade]['reverted_at'] ?? null) && !$this->isAdmin())
+            @if (!$this->canEdit($selectedGrade) && !$this->isAdmin())
                 <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.5rem;background:#fef3c7;border:1px solid #fcd34d;border-radius:0.5rem;color:#92400e;font-size:0.875rem;font-weight:600;">
                     <svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
                     Locked - Contact Admin to Edit

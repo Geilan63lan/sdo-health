@@ -387,11 +387,11 @@ class HealthExaminationMatrix extends Component
 
     public function isVisible(string $grade): bool
     {
-        if ($this->showAll || ! $this->studentGradeLevel) {
+        if ($this->showAll) {
             return true;
         }
 
-        return GradeLevel::indexOf($grade) <= GradeLevel::indexOf($this->studentGradeLevel);
+        return $grade === $this->studentGradeLevel;
     }
 
     public function getLegendOptions(): array
@@ -412,7 +412,7 @@ class HealthExaminationMatrix extends Component
     public function render()
     {
         $gradeLevels = GradeLevel::ordered();
-        $hiddenCount = count(array_filter($gradeLevels, fn ($g) => ! $this->isVisible($g)));
+        $hiddenCount = $this->showAll ? 0 : count($gradeLevels) - 1;
         $currentIdx = $this->studentGradeLevel ? array_search($this->studentGradeLevel, $gradeLevels) : 0;
 
         return view('livewire.health-examination-matrix', [

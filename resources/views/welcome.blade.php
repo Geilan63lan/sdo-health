@@ -32,7 +32,7 @@
     <body class="h-full bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased">
         <div class="relative min-h-screen flex flex-col">
             <!-- Navigation -->
-            <nav class="relative z-10 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
+            <nav class="sticky top-0 z-10 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
                 <div class="mx-auto max-w-7xl px-6 py-6 lg:px-8 flex items-center justify-between">
                     <div class="flex lg:flex-1 items-center gap-3">
                         <img src="https://sdolegazpicity.com/wp-content/uploads/2025/12/cropped-LOGO-sdo-leg-1-1.png" alt="SDO Legazpi Logo" class="h-10 w-auto">

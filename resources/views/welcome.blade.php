@@ -28,6 +28,38 @@
             }
         </script>
         <link rel="stylesheet" href="/css/flux.css">
+        <script>
+            // Initialize dark mode from localStorage or system preference
+            function initDarkMode() {
+                if (localStorage.getItem('dark-mode') === 'true' ||
+                    (!localStorage.getItem('dark-mode') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                }
+            }
+            initDarkMode();
+
+            function toggleDarkMode() {
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('dark-mode', isDark);
+                const sunIcon = document.getElementById('sun-icon');
+                const moonIcon = document.getElementById('moon-icon');
+                if (sunIcon && moonIcon) {
+                    sunIcon.classList.toggle('hidden', !isDark);
+                    moonIcon.classList.toggle('hidden', isDark);
+                }
+            }
+
+            // Set initial icon state
+            document.addEventListener('DOMContentLoaded', () => {
+                const isDark = document.documentElement.classList.contains('dark');
+                const sunIcon = document.getElementById('sun-icon');
+                const moonIcon = document.getElementById('moon-icon');
+                if (sunIcon && moonIcon) {
+                    sunIcon.classList.toggle('hidden', !isDark);
+                    moonIcon.classList.toggle('hidden', isDark);
+                }
+            });
+        </script>
     </head>
     <body class="h-full bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased">
         <div class="relative min-h-screen flex flex-col">
@@ -40,6 +72,16 @@
                     </div>
 
                     <div class="flex items-center gap-4">
+                        <!-- Dark Mode Toggle -->
+                        <button onclick="toggleDarkMode()" class="rounded-full p-2 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" aria-label="Toggle dark mode">
+                            <svg id="sun-icon" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                            <svg id="moon-icon" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                            </svg>
+                        </button>
+
                         @auth
                             <a href="{{ route('filament.admin.pages.dashboard') }}" class="rounded-full bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all">
                                 Go to Dashboard

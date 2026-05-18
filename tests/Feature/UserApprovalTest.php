@@ -4,17 +4,16 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use App\Notifications\NewUserWaitingApproval;
+use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
-use Spatie\Permission\Models\Role;
 
 use function Pest\Laravel\actingAs;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    Role::create(['name' => 'health_coordinator']);
-    Role::create(['name' => 'sdo_admin']);
+    $this->seed(RolePermissionSeeder::class);
 });
 
 test('unapproved user is redirected to pending approval page', function () {

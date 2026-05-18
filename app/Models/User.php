@@ -84,7 +84,19 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->is_approved && $this->email_verified_at;
+        // Users must be email verified to access the panel
+        if ($this->email_verified_at === null) {
+            return false;
+        }
+
+        // Users must have a role to access the panel
+        if (! $this->hasRole(['sdo_admin', 'health_coordinator', 'principal'])) {
+            return false;
+        }
+
+        // Allow access - approval check is handled by RedirectIfUnapproved middleware
+        // so unapproved users can be redirected to the pending-approval page
+        return true;
     }
 
     public function canViewPanel(Panel $panel): bool

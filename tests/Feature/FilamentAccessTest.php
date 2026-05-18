@@ -3,18 +3,15 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Spatie\Permission\Models\Role;
 
 use function Pest\Laravel\actingAs;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    // Setup roles
-    Role::create(['name' => 'health_coordinator']);
-    Role::create(['name' => 'sdo_admin']);
-    Role::create(['name' => 'principal']);
+    $this->seed(RolePermissionSeeder::class);
 });
 
 test('unapproved user is redirected from filament admin panel', function () {

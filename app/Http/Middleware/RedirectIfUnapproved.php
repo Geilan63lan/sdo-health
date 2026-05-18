@@ -15,6 +15,33 @@ class RedirectIfUnapproved
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // Skip middleware for auth-related routes to prevent redirect loops during login/logout
+        $skipRoutes = [
+            'login',
+            'login.store',
+            'logout',
+            'register',
+            'register.store',
+            'password.request',
+            'password.email',
+            'password.reset',
+            'password.update',
+            'password.confirm',
+            'verification.notice',
+            'verification.verify',
+            'verification.send',
+            'two-factor.login',
+            'two-factor.login.store',
+            'profile.edit',
+            'user-password.edit',
+            'appearance.edit',
+            'two-factor.show',
+        ];
+
+        if (in_array($request->route()?->getName(), $skipRoutes)) {
+            return $next($request);
+        }
+
         $user = $request->user();
 
         // If user is authenticated and is NOT approved, redirect to the pending approval page.

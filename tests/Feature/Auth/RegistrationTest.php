@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\School;
+use Database\Seeders\RolePermissionSeeder;
 
 test('registration screen can be rendered', function () {
     $response = $this->get(route('register'));
@@ -9,6 +10,8 @@ test('registration screen can be rendered', function () {
 });
 
 test('new users can register', function () {
+    $this->seed(RolePermissionSeeder::class);
+
     $school = School::factory()->create();
 
     $response = $this->post(route('register.store'), [

@@ -71,7 +71,10 @@
                         <span class="text-xl font-bold tracking-tight">School Division Office - Legazpi</span>
                     </div>
 
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-6">
+                        <a href="#about" class="text-sm font-semibold leading-6 hover:text-blue-600 transition-colors">About</a>
+                        <a href="#contact" class="text-sm font-semibold leading-6 hover:text-blue-600 transition-colors">Contact</a>
+
                         <!-- Dark Mode Toggle -->
                         <button onclick="toggleDarkMode()" class="rounded-full p-2 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" aria-label="Toggle dark mode">
                             <svg id="sun-icon" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -221,15 +224,118 @@
                     </div>
                 </div>
 
+                <!-- About Us Preview Section -->
+                <div id="about" class="py-24 sm:py-32 bg-white dark:bg-slate-900">
+                    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+                        <div class="mx-auto max-w-2xl lg:text-center">
+                            <h2 class="text-base font-semibold leading-7 text-blue-800">About Us</h2>
+                            <p class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl text-slate-900 dark:text-white text-balance">
+                                SDO Legazpi Health Management System
+                            </p>
+                            <p class="mt-6 text-lg leading-8 text-slate-600 dark:text-slate-400">
+                                A centralized platform for managing student health records, vaccinations, and health programs 
+                                within the Division of Legazpi City. We are committed to ensuring every student's health and 
+                                wellness is prioritized through efficient and data-driven health management.
+                            </p>
+                            <div class="mt-10">
+                                <a href="{{ route('about') }}" class="text-lg font-semibold leading-6 text-blue-800 hover:text-blue-600 transition-colors">
+                                    Learn more about us <span aria-hidden="true">→</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Us Preview Section -->
+                <div id="contact" class="py-24 sm:py-32 border-t border-slate-200 dark:border-slate-800">
+                    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+                        <div class="mx-auto max-w-2xl lg:text-center">
+                            <h2 class="text-base font-semibold leading-7 text-blue-800">Contact Us</h2>
+                            <p class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl text-slate-900 dark:text-white text-balance">
+                                Get in Touch
+                            </p>
+                            <p class="mt-6 text-lg leading-8 text-slate-600 dark:text-slate-400">
+                                Have questions or need assistance? Reach out to us through any of our contact channels 
+                                or visit our contact page for more information.
+                            </p>
+                        </div>
+
+                        <div class="mx-auto mt-12 max-w-xl">
+                            <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+                                <div class="rounded-xl border border-slate-200 dark:border-slate-800 p-6 text-center bg-white dark:bg-slate-900">
+                                    <div class="mx-auto size-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                    </div>
+                                    <h3 class="mt-3 text-sm font-semibold text-slate-900 dark:text-white">Address</h3>
+                                    <p class="mt-1 text-xs text-slate-500">SDO Legazpi Rd, Bgy. 42 - Rawis (Bgy. 65), Legazpi City</p>
+                                </div>
+                                <div class="rounded-xl border border-slate-200 dark:border-slate-800 p-6 text-center bg-white dark:bg-slate-900">
+                                    <div class="mx-auto size-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                        </svg>
+                                    </div>
+                                    <h3 class="mt-3 text-sm font-semibold text-slate-900 dark:text-white">Phone</h3>
+                                    <p class="mt-1 text-xs text-slate-500">(052) 742-8227</p>
+                                </div>
+                                <div class="rounded-xl border border-slate-200 dark:border-slate-800 p-6 text-center bg-white dark:bg-slate-900">
+                                    <div class="mx-auto size-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                        </svg>
+                                    </div>
+                                    <h3 class="mt-3 text-sm font-semibold text-slate-900 dark:text-white">Email</h3>
+                                    <p class="mt-1 text-xs text-slate-500">health@sdolegazpicity.com</p>
+                                </div>
+                            </div>
+                            <div class="mt-10 text-center">
+                                <a href="{{ route('contact') }}" class="rounded-md bg-blue-800 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-blue-500 transition-all">
+                                    Get in Touch
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Footer Decoration -->
                 <div class="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]" aria-hidden="true">
                     <div class="relative left-[calc(50%+3rem)] aspect-1155/678 w-[36.125rem] -translate-x-1/2 bg-linear-to-tr from-[#ff80b5] to-[#9089fc] opacity-20 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
                 </div>
             </main>
 
-            <footer class="border-t border-slate-200 dark:border-slate-800 py-10 bg-white dark:bg-slate-900">
-                <div class="mx-auto max-w-7xl px-6 lg:px-8 text-center text-sm text-slate-500">
-                    <p>&copy; {{ date('Y') }} SDO Legazpi - Health Management System. All rights reserved.</p>
+            <footer class="border-t border-slate-200 dark:border-slate-800 py-12 bg-white dark:bg-slate-900">
+                <div class="mx-auto max-w-7xl px-6 lg:px-8">
+                    <div class="grid grid-cols-1 gap-8 sm:grid-cols-3">
+                        <div>
+                            <h3 class="text-sm font-semibold text-slate-900 dark:text-white">About</h3>
+                            <ul class="mt-4 space-y-3">
+                                <li><a href="{{ route('about') }}" class="text-sm text-slate-500 hover:text-blue-600 transition-colors">About Us</a></li>
+                                <li><a href="{{ route('home') }}#features" class="text-sm text-slate-500 hover:text-blue-600 transition-colors">Features</a></li>
+                                <li><a href="{{ route('home') }}#about" class="text-sm text-slate-500 hover:text-blue-600 transition-colors">Our Mission</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Contact</h3>
+                            <ul class="mt-4 space-y-3 text-sm text-slate-500">
+                                <li>SDO Legazpi Rd, Bgy. 42 - Rawis (Bgy. 65), Legazpi City, Albay</li>
+                                <li>(052) 123-4567</li>
+                                <li>health@sdolegazpicity.com</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Legal</h3>
+                            <ul class="mt-4 space-y-3">
+                                <li><a href="#" class="text-sm text-slate-500 hover:text-blue-600 transition-colors">Privacy Policy</a></li>
+                                <li><a href="#" class="text-sm text-slate-500 hover:text-blue-600 transition-colors">Terms of Service</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="mt-10 border-t border-slate-200 dark:border-slate-800 pt-8 text-center text-sm text-slate-500">
+                        <p>&copy; {{ date('Y') }} SDO Legazpi - Health Management System. All rights reserved.</p>
+                    </div>
                 </div>
             </footer>
         </div>

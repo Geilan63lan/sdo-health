@@ -9,6 +9,7 @@ use App\Filament\Resources\SchoolClinicResource;
 use App\Filament\Resources\SchoolResource;
 use App\Filament\Resources\StudentResource;
 use App\Filament\Resources\VaccinationResource;
+use App\Filament\Resources\Developers\DeveloperResource;
 use App\Http\Middleware\RedirectIfUnapproved;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -45,6 +46,13 @@ class AdminPanelProvider extends PanelProvider
             ->darkMode()
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
+            ->navigationGroups([
+                'School Management',
+                'Student Management',
+                'Health Services',
+                'User Management',
+                'System Management',
+            ])
             ->pages([
                 Dashboard::class,
             ])

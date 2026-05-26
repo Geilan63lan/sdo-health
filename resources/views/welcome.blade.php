@@ -113,7 +113,7 @@
                             </div>
                         </div>
                         <h1 class="mt-10 text-5xl font-bold tracking-tight sm:text-7xl">
-                            SDO - Legazpi <span class="text-blue-600 dark:text-blue-400">Health System</span>
+                            SDO - Legazpi <span class="text-blue-800 dark:text-blue-300">Health System</span>
                         </h1>
                         <p class="mt-6 text-lg leading-8 text-slate-600 dark:text-slate-400">
                             A centralized platform for managing student health records, vaccinations, and health programs within the Division of Legazpi City. Ensuring every student's health and wellness is prioritized.
@@ -124,7 +124,7 @@
                                     Access System
                                 </a>
                             @else
-                                <a href="{{ route('login') }}" class="rounded-md bg-blue-600 px-6 py-3 text-lg font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all">
+                                <a href="{{ route('login') }}" class="rounded-md bg-blue-800 px-6 py-3 text-lg font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all">
                                     Get Started
                                 </a>
                                 <a href="#features" class="text-lg font-semibold leading-6 hover:text-blue-600 transition-colors">Learn more <span aria-hidden="true">→</span></a>
@@ -167,7 +167,7 @@
                 <div id="features" class="py-24 sm:py-32 bg-white dark:bg-slate-900 border-y border-slate-200 dark:border-slate-800">
                     <div class="mx-auto max-w-7xl px-6 lg:px-8">
                         <div class="mx-auto max-w-2xl lg:text-center">
-                            <h2 class="text-base font-semibold leading-7 text-blue-600">Health Services</h2>
+                            <h2 class="text-base font-semibold leading-7 text-blue-800">Health Services</h2>
                             <p class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl text-slate-900 dark:text-white text-balance">
                                 Everything you need to manage student health
                             </p>
